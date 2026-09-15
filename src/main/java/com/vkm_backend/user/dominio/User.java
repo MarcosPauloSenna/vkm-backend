@@ -49,5 +49,7 @@ public class User {
     }
 
     public User() {
+        this.active = 1;
+        this.role = EnumRoleUser.USER;
     }
 }
