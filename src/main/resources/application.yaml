@@ -4,8 +4,8 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
+    url: jdbc:postgresql://postgres:5432/kvmdb
+    username: kvmadm
     password: 5963593
     driver-class-name: org.postgresql.Driver
 
@@ -17,5 +17,3 @@ spring:
 
   flyway:
     enabled: true
-    location:
-      classpath: db/migration
