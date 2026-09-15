@@ -4,15 +4,17 @@ package com.vkm_backend.user.infra.mapper;
 import com.vkm_backend.user.dominio.User;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.web.CreateUserRequest;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import com.vkm_backend.user.infra.web.UserResponse;
+import org.springframework.stereotype.Component;
 
 
 import java.time.LocalDateTime;
 
+@Component
 public class UserMapper {
 
 
-    public UserEntity toEntity( User user){
+    public UserEntity toEntity(User user){
         UserEntity entity = new UserEntity();
 
         if(user.getId() != null){
@@ -20,9 +22,11 @@ public class UserMapper {
             entity.setUpdatedAt(LocalDateTime.now());
         }
 
-        entity.setName(entity.getName());
+        entity.setName(user.getName());
         entity.setBirthDate(user.getBirthDate());
         entity.setPhone(user.getPhone());
+        entity.setRole(user.getRole());
+        entity.setActive(user.getActive());
 
         if (user.getProfilePhoto() != null) {
             entity.setProfilePhoto(user.getProfilePhoto());
@@ -51,14 +55,12 @@ public class UserMapper {
         return user;
     }
 
-    public CreateUserRequest toDto(User user){
+    public UserResponse toResponse(User user){
 
-    return new CreateUserRequest(user.getName(),
+    return new UserResponse(user.getName(),
                                  user.getBirthDate(),
                                  user.getPhone(),
-                                 user.getProfilePhoto(),
-                                 user.getUsername(),
-                                 user.getPassword());
+                                 user.getUsername());
     }
 
     public User fromUser(CreateUserRequest request){
@@ -73,6 +75,11 @@ public class UserMapper {
 
         return user;
 
+    }
+
+    public CreateUserRequest toRequest(User user){
+        return  new CreateUserRequest(user.getName(),
+                user.getBirthDate(), user.getPhone(), user.getProfilePhoto(), user.getUsername(), user.getPassword());
     }
 
 
