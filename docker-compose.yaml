@@ -1,15 +1,17 @@
 services:
+  api:
+    build: .
+    image: vkm-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
   postgres:
     image: postgres:latest
-    container_name: shop-postgres
     environment:
       POSTGRES_DB: kvmdb
       POSTGRES_USER: kvmadm
       POSTGRES_PASSWORD: 5963593
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:

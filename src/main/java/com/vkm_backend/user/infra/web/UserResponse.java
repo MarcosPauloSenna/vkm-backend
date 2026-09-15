@@ -1,4 +1,9 @@
 package com.vkm_backend.user.infra.web;
 
-public record UserResponse() {
-}
+import java.time.LocalDate;
+
+public record UserResponse(String name,
+                           LocalDate birthDate,
+                           String phone,
+                           String username) {
+        }

@@ -1,33 +1,36 @@
 package com.vkm_backend.user.dominio;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
+@Setter
 @Getter
 public class User {
 
-    private final UserId id;
-    private final String name;
-    private final LocalDate birthDate;
-    private final String phone;
-    private final String profilePhoto;
-    private final String username;
-    private final String password;
-    private final Integer active;
-    private final LocalTime lastLoginAt;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private  Long id;
+    private  String name;
+    private  LocalDate birthDate;
+    private  String phone;
+    private  String profilePhoto;
+    private  String username;
+    private  String password;
+    private  Integer active;
+    private  EnumRoleUser role;
+    private  LocalTime lastLoginAt;
+    private  LocalDateTime createdAt;
+    private  LocalDateTime updatedAt;
 
-    public User(UserId id,
+    public User(Long id,
                 String name,
                 LocalDate birthDate,
                 String phone,
                 String profilePhoto,
                 String username, String password,
                 Integer active,
+                EnumRoleUser role,
                 LocalTime lastLoginAt,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt) {
@@ -39,9 +42,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.active = active;
+        this.role = role;
         this.lastLoginAt = lastLoginAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
+    public User() {
+        this.active = 1;
+        this.role = EnumRoleUser.USER;
+    }
 }
