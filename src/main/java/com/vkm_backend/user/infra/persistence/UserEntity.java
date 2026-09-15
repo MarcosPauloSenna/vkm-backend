@@ -1,9 +1,11 @@
 package com.vkm_backend.user.infra.persistence;
 
-import com.vkm_backend.user.dominio.UserId;
+import com.vkm_backend.user.dominio.EnumRoleUser;
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +19,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private  String name;
@@ -36,14 +38,19 @@ public class UserEntity {
     private  String password;
 
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "active", nullable = false, columnDefinition = "DEFAULT 1")
     private  int active;
+
+    @Column(name = "role", nullable = false, columnDefinition = "DEFAULT 'USER'")
+    private EnumRoleUser role;
 
     private  LocalTime lastLoginAt;
 
+    @CreationTimestamp
     @Column(name = "createdAt", nullable = false)
     private  LocalDateTime createdAt;
 
+    @CreationTimestamp
     @Column(name = "updatedAt", nullable = false)
     private  LocalDateTime updatedAt;
 
@@ -55,6 +62,7 @@ public class UserEntity {
                       String username,
                       String password,
                       int active,
+                      EnumRoleUser role,
                       LocalTime lastLoginAt,
                       LocalDateTime createdAt,
                       LocalDateTime updatedAt) {
@@ -66,6 +74,7 @@ public class UserEntity {
         this.username = username;
         this.password = password;
         this.active = active;
+        this.role = role;
         this.lastLoginAt = lastLoginAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
