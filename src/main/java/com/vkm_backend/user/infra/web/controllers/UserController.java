@@ -25,7 +25,7 @@ public class UserController {
         return  userUseCase.createUser(request);
     }
 
-    @GetMapping("/serchall")
+    @GetMapping("/searchall")
     public List<UserResponse> findAllUsers(){
 
         return userUseCase.listAllUsers();
