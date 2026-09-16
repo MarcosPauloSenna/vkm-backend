@@ -3,8 +3,8 @@ package com.vkm_backend.user.infra.mapper;
 
 import com.vkm_backend.user.dominio.User;
 import com.vkm_backend.user.infra.persistence.UserEntity;
-import com.vkm_backend.user.infra.web.CreateUserRequest;
-import com.vkm_backend.user.infra.web.UserResponse;
+import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
+import com.vkm_backend.user.infra.web.dto.UserResponse;
 import org.springframework.stereotype.Component;
 
 

@@ -1,4 +1,4 @@
-package com.vkm_backend.user.infra.web;
+package com.vkm_backend.user.infra.web.dto;
 
 import java.time.LocalDate;
 
