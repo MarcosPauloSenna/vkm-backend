@@ -29,9 +29,9 @@ public class UserUseCase {
         UserEntity entity =  userMapper.toEntity(user);
         // validando Username e Phone
         if (userRepository.existsByUsername(entity.getUsername())){
-            throw new BusinessException("Nome de usuario: " +entity.getUsername()+ ", ja existe. Digite outro nome de usuario! ", 300);
+            throw new BusinessException("Nome de usuario: " +entity.getUsername()+ ", já esta cadastrado. Digite outro nome de usuario! ", 300);
         }else if (userRepository.existsByPhone(entity.getPhone())) {
-            throw new BusinessException("Telefone: " +entity.getUsername()+ ", ja existe. Digite outro Telefone! ", 301);
+            throw new BusinessException("Telefone: " +entity.getPhone()+ ", já esta cadastrado. Digite outro Telefone! ", 301);
         };
 
         UserEntity userCreated = userRepository.save(entity);
