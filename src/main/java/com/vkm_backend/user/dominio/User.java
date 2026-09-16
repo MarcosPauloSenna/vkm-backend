@@ -19,7 +19,7 @@ public class User {
     private  String password;
     private  Integer active;
     private  EnumRoleUser role;
-    private  LocalTime lastLoginAt;
+    private  LocalDateTime lastLoginAt;
     private  LocalDateTime createdAt;
     private  LocalDateTime updatedAt;
 
@@ -31,7 +31,7 @@ public class User {
                 String username, String password,
                 Integer active,
                 EnumRoleUser role,
-                LocalTime lastLoginAt,
+                LocalDateTime lastLoginAt,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt) {
         this.id = id;
