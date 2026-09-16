@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -71,6 +73,18 @@ public class GlobalExceptionHandler {
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),400, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION. LOCAL: "
                 +request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> credentialsValidationException(BadCredentialsException ex){
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, ex.getMessage(), "CREDENTIAL_VERIFICATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ErrorResponse> authenticationValidationException(InternalAuthenticationServiceException ex){
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não é encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
 }
