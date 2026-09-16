@@ -1,4 +1,4 @@
-package com.vkm_backend.global.handler;
+package com.vkm_backend.infra.global.handler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;

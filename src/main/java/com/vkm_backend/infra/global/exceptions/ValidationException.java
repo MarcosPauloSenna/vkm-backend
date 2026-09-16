@@ -1,4 +1,4 @@
-package com.vkm_backend.global.exceptions;
+package com.vkm_backend.infra.global.exceptions;
 
 public class ValidationException extends RuntimeException{
 

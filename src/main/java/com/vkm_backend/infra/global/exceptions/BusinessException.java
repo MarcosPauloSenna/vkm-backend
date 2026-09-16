@@ -1,4 +1,4 @@
-package com.vkm_backend.global.exceptions;
+package com.vkm_backend.infra.global.exceptions;
 
 import lombok.Getter;
 

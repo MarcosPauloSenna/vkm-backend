@@ -1,7 +1,10 @@
-package com.vkm_backend.global.handler;
+package com.vkm_backend.infra.global.handler;
 
-import com.vkm_backend.global.exceptions.BusinessException;
-import com.vkm_backend.global.exceptions.ValidationException;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.vkm_backend.infra.global.exceptions.BusinessException;
+import com.vkm_backend.infra.global.exceptions.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,25 +12,27 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private  final ZoneId ZONE = ZoneId.of("America/Sao_Paulo");
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessException (BusinessException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(),ex.getLocal(), ex.getMessage(), "BUSINESS_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),ex.getLocal(), ex.getMessage(), "BUSINESS_EXCEPTION");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> validationException (ValidationException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(),201, ex.getMessage(), "VALIDATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),201, ex.getMessage(), "VALIDATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
@@ -43,7 +48,7 @@ public class GlobalExceptionHandler {
                 .orElse("Dados inválidos.");
 
         ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZONE),
                 400,
                 message,
                 "VALIDATION_EXCEPTION"
@@ -52,6 +57,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
+    }
+
+    @ExceptionHandler(JWTCreationException.class)
+    public ResponseEntity<ErrorResponse> jwtCreationException(JWTCreationException ex, HttpServletRequest request){
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),400, ex.getMessage(), "JWT_CRREATION_EXCEPTION. LOCAL: "
+                +request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<ErrorResponse> jwtValidationException(JWTVerificationException ex, HttpServletRequest request){
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),400, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION. LOCAL: "
+                +request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
 }
