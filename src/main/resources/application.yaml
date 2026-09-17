@@ -4,7 +4,7 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/kvmdb
+    url: jdbc:postgresql://postgres:5432/kvmdb
     username: kvmadm
     password: 5963593
     driver-class-name: org.postgresql.Driver
@@ -22,7 +22,7 @@ api:
   security:
     token:
       secret: ${JWT_SECRET:my-secret-key}
-
+      expiration-minutes: 15
     refresh-token:
-      expiration: 8
+      expiration-days: 14
 

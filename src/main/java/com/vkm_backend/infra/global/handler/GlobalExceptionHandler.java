@@ -3,6 +3,7 @@ package com.vkm_backend.infra.global.handler;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
+import com.vkm_backend.infra.global.exceptions.EncryptionException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -85,5 +86,12 @@ public class GlobalExceptionHandler {
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não é encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
+
+    @ExceptionHandler(EncryptionException.class)
+    public ResponseEntity<ErrorResponse> encryptionException(EncryptionException ex){
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),500, "usuário não é encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
 
 }
