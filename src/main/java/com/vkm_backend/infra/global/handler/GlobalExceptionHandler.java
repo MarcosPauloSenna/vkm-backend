@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
@@ -63,16 +62,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JWTCreationException.class)
     public ResponseEntity<ErrorResponse> jwtCreationException(JWTCreationException ex, HttpServletRequest request){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),400, ex.getMessage(), "JWT_CRREATION_EXCEPTION. LOCAL: "
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_CRREATION_EXCEPTION. LOCAL: "
                 +request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> jwtValidationException(JWTVerificationException ex, HttpServletRequest request){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),400, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION. LOCAL: "
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION. LOCAL: "
                 +request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
