@@ -7,7 +7,8 @@ CREATE TABLE users
     profile_photo VARCHAR(255),
     username      VARCHAR(255)                            NOT NULL,
     password      VARCHAR(255)                            NOT NULL,
-    active        INTEGER                                 NOT NULL,
+    active        INTEGER DEFAULT 1                       NOT NULL,
+    role          TEXT  DEFAULT 'USER'                    NOT NULL,
     last_login_at time(6) WITHOUT TIME ZONE,
     created_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     updated_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
@@ -16,3 +17,6 @@ CREATE TABLE users
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_phone UNIQUE (phone);
+
+ALTER TABLE users
+    ADD CONSTRAINT uc_users_username UNIQUE (username);
