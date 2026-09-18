@@ -6,6 +6,9 @@ import com.vkm_backend.user.infra.persistence.RefreshTokenEntity;
 import com.vkm_backend.user.infra.persistence.RefreshTokenRepository;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
@@ -25,23 +28,29 @@ public class RefreshTokenService {
 
     private final UserRepository userRepository;
 
+    private final AccessTokenService accessTokenService;
+
 
     @Value("${api.security.refresh-token.expiration-days}")
     private long expirationDays;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository,
+                               UserRepository userRepository,
+                               AccessTokenService accessTokenService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.userRepository = userRepository;
 
+        this.accessTokenService = accessTokenService;
     }
 
-    public String create(String username){
+    @Transactional
+    public String create(String username, String tokenFamily){
 
         UserEntity user = userRepository.findByUsername(username);
         if (user == null) {
             throw new BusinessException("Usuário não encontrado");
         }
-        String tokenFamily = UUID.randomUUID().toString();
+
         String rawToken = generateRawToken();
 
         RefreshTokenEntity entity = new RefreshTokenEntity();
@@ -75,6 +84,51 @@ public class RefreshTokenService {
         }
 
 
+    }
+
+    @Transactional
+    public RefreshTokenResult refresh(String refreshToken){
+        String tokenHash = hash(refreshToken);
+
+        RefreshTokenEntity currentToken = refreshTokenRepository.findByTokenHash(tokenHash)
+                .orElseThrow(() -> new ValidationException("Refresh token inválido"));
+
+        Instant now = Instant.now();
+
+        if (currentToken.getRevokedAt() != null){
+            refreshTokenRepository.revokeFamily(currentToken.getTokenFamily(), now);
+
+            throw new ValidationException("Refresh token revogado! Para sua segurança todas as sessões foram encerrradas. Faça novo login!");
+        }
+        if (currentToken.getExpiresAt().isBefore(now)){
+            throw new ValidationException("Refresh token expirado");
+        }
+
+        UserEntity user = currentToken.getUser();
+
+        currentToken.setRevokedAt(now);
+        currentToken.setLastUsedAt(now);
+        refreshTokenRepository.save(currentToken);
+
+        String newAccessToken = accessTokenService.generateAccessTokens(user);
+
+        String newRefreshToken = create(user.getUsername(), currentToken.getTokenFamily());
+
+        return new RefreshTokenResult(newAccessToken, newRefreshToken);
+
+    }
+
+    @Transactional
+    public void logout(String rawToken) {
+        String tokenHash = hash(rawToken);
+
+        refreshTokenRepository.findByTokenHash(tokenHash)
+                .ifPresent(token -> {
+                    if (token.getRevokedAt() == null) {
+                        token.setRevokedAt(Instant.now());
+                        refreshTokenRepository.save(token);
+                    }
+                });
     }
 
 }

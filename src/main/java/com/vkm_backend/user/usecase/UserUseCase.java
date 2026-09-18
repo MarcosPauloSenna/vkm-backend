@@ -7,6 +7,7 @@ import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class UserUseCase {
         this.userMapper = userMapper;
     }
 
+    @Transactional
     public UserResponse createUser( CreateUserRequest request){
 
         User user = userMapper.fromUser(request);

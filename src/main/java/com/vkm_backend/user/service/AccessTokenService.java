@@ -41,7 +41,7 @@ public class AccessTokenService {
                 .getSubject();
     }
 
-    public Instant generateExpiretionDate(){
+    private Instant generateExpiretionDate(){
         return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
     }
 }
