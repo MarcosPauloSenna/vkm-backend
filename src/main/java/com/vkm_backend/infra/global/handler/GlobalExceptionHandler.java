@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> validationException (ValidationException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),201, ex.getMessage(), "VALIDATION_EXCEPTION");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        //ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, "", "VALIDATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
