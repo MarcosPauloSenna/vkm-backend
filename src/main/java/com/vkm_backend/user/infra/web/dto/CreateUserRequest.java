@@ -32,6 +32,6 @@ public record CreateUserRequest(
         String username,
 
         @NotBlank(message = "A Senha é obrigatório")
-        @Size(max = 8, message = "A Senha deve possuir no máximo 8 caracteres")
+        @Size(min = 8, max = 27, message = "A Senha deve possuir no minimo 8 caracteres")
         String password) {
 }
