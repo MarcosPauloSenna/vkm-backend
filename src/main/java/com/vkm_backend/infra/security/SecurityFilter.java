@@ -1,6 +1,7 @@
 package com.vkm_backend.infra.security;
 
 
+import com.vkm_backend.infra.global.exceptions.ValidationException;
 import com.vkm_backend.user.service.AccessTokenService;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -22,11 +23,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     public final AccessTokenService accessTokenService;
 
-    @Autowired
-    UserRepository userRepository;
 
-    public SecurityFilter(AccessTokenService accessTokenService) {
+    public final UserRepository userRepository;
+
+    public SecurityFilter(AccessTokenService accessTokenService, UserRepository userRepository) {
         this.accessTokenService = accessTokenService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -35,7 +37,10 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null){
             var username = accessTokenService.validationAccessToken(token);
             UserDetails user = userRepository.findByUsername(username);
-
+            if (user == null || !user.isEnabled()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -44,7 +49,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private String recoverToken(HttpServletRequest request){
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
-        return authHeader.replace("Bearer ","");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {return null;}
+        return authHeader.substring(7);
     }
 }
