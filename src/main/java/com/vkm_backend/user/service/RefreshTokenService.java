@@ -106,6 +106,7 @@ public class RefreshTokenService {
         }
 
         UserEntity user = currentToken.getUser();
+        if (!user.isEnabled()){throw new ValidationException("Usuario inativo");}
 
         currentToken.setRevokedAt(now);
         currentToken.setLastUsedAt(now);
