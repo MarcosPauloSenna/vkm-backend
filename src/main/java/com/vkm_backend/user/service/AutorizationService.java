@@ -1,5 +1,6 @@
 package com.vkm_backend.user.service;
 
+import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,13 @@ public class AutorizationService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return repository.findByUsername(username);
+        UserEntity user = repository.findByUsername(username);
+
+        if (user == null){
+            throw new UsernameNotFoundException("Usuário não encontrado");
+        }
+
+        return user;
 
     }
 }
