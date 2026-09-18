@@ -9,6 +9,7 @@ import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.parser.Entity;
@@ -23,10 +24,13 @@ public class UserUseCase {
 
     private   final  UserMapper userMapper;
 
-    public UserUseCase(UserRepository userRepository, UserMapper userMapper) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserUseCase(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
 
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -42,8 +46,7 @@ public class UserUseCase {
         };
 
         //Criando hash password
-        String encryptedPassword = new BCryptPasswordEncoder().encode(entity.getPassword());
-        entity.setPassword(encryptedPassword);
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
 
         UserEntity userCreated = userRepository.save(entity);
 
