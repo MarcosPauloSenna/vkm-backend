@@ -27,6 +27,7 @@ public class RefreshTokenEntity {
     @Column(nullable = false, length = 36)
     private String tokenFamily;
 
+    @Column(nullable = false)
     private Instant expiresAt;
 
     @CreationTimestamp
