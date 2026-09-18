@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("auth")
-public class AutenticationController {
+public class AuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -46,7 +46,7 @@ public class AutenticationController {
 
     }
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity refresh(@Valid @RequestBody RefreshTokenRequest request){
 
         RefreshTokenResult newsTokens = refreshTokenService.refresh(request.refreshToken());
@@ -54,7 +54,7 @@ public class AutenticationController {
 
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(@RequestBody LogoutRequest request){
         refreshTokenService.logout(request.refreshToken());
