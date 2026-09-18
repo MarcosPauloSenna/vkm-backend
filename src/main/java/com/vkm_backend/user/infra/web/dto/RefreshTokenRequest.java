@@ -1,4 +1,7 @@
 package com.vkm_backend.user.infra.web.dto;
 
-public record RefreshTokenRequest(String refreshToken) {
+import jakarta.validation.constraints.NotBlank;
+
+public record RefreshTokenRequest(@NotBlank(message = "refreshToken não informado")
+                                  String refreshToken) {
 }
