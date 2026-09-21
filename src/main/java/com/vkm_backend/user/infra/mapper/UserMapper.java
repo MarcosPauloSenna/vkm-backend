@@ -1,7 +1,7 @@
 package com.vkm_backend.user.infra.mapper;
 
 
-import com.vkm_backend.user.dominio.User;
+import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 public class UserMapper {
 
 
-    public UserEntity toEntity(User user){
+    public UserEntity toEntity(User user) {
         UserEntity entity = new UserEntity();
 
-        if(user.getId() != null){
+        if (user.getId() != null) {
             entity.setId(user.getId());
             entity.setUpdatedAt(LocalDateTime.now());
         }
@@ -37,7 +37,7 @@ public class UserMapper {
         return entity;
     }
 
-    public User toDomain(UserEntity entity){
+    public User toDomain(UserEntity entity) {
         User user = new User();
 
 
@@ -51,19 +51,26 @@ public class UserMapper {
         }
         user.setUsername(entity.getUsername());
         user.setPassword(entity.getPassword());
+        user.setRole(entity.getRole());
+        user.setActive(entity.getActive());
+        user.setCreatedAt(entity.getCreatedAt());
+        user.setLastLoginAt(null);
+
 
         return user;
     }
 
-    public UserResponse toResponse(User user){
+    public UserResponse toResponse(User user) {
 
-    return new UserResponse(user.getName(),
-                                 user.getBirthDate(),
-                                 user.getPhone(),
-                                 user.getUsername());
+        return new UserResponse(user.getId(),
+                user.getName(),
+                user.getBirthDate(),
+                user.getPhone(),
+                user.getUsername(),
+                user.getProfilePhoto());
     }
 
-    public User fromUser(CreateUserRequest request){
+    public User fromUser(CreateUserRequest request) {
         User user = new User();
 
         user.setName(request.name());
@@ -77,8 +84,8 @@ public class UserMapper {
 
     }
 
-    public CreateUserRequest toRequest(User user){
-        return  new CreateUserRequest(user.getName(),
+    public CreateUserRequest toRequest(User user) {
+        return new CreateUserRequest(user.getName(),
                 user.getBirthDate(), user.getPhone(), user.getProfilePhoto(), user.getUsername(), user.getPassword());
     }
 

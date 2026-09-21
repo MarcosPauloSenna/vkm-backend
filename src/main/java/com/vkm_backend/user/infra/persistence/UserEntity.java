@@ -1,6 +1,6 @@
 package com.vkm_backend.user.infra.persistence;
 
-import com.vkm_backend.user.dominio.EnumRoleUser;
+import com.vkm_backend.user.domain.EnumRoleUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 

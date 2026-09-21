@@ -1,18 +1,18 @@
 package com.vkm_backend.user.usecase;
 
 import com.vkm_backend.infra.global.exceptions.BusinessException;
-import com.vkm_backend.user.dominio.User;
+import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.mapper.UserMapper;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
+import com.vkm_backend.user.infra.web.dto.UpdateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
 import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,5 +67,35 @@ public class UserUseCase {
          }
 
          return users;
+    }
+
+
+    public UserResponse getMe(String userNamer){
+        UserEntity user = userRepository.findByUsername(userNamer);
+        return  userMapper.toResponse(userMapper.toDomain(user));
+    }
+
+    public UserResponse updateMe(UpdateUserRequest user, String username){
+        UserEntity entity = userRepository.findByUsername(username);
+
+        if (user.nome() != null){
+            entity.setName(user.nome());
+        }
+
+        if (user.birthDate() != null){
+            entity.setBirthDate(user.birthDate());
+        }
+
+        if (user.phone() != null){
+            entity.setPhone(user.phone());
+        }
+
+        if (user.profilePhoto() != null){
+            entity.setProfilePhoto(user.profilePhoto());
+        }
+
+        UserEntity userUpdated = userRepository.save(entity);
+
+        return userMapper.toResponse(userMapper.toDomain(userUpdated));
     }
 }

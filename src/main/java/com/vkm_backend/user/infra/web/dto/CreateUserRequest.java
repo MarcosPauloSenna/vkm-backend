@@ -2,6 +2,7 @@ package com.vkm_backend.user.infra.web.dto;
 
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ public record CreateUserRequest(
         @Size(max = 100, message = "Nome deve possuir no máximo 100 caracteres")
         String name,
 
+        @JsonFormat(pattern = "dd/MM/yyyy")
         @NotNull(message = "Data de nascimento é obrigatório")
         LocalDate birthDate,
 

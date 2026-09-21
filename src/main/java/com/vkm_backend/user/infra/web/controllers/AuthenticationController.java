@@ -1,11 +1,11 @@
 package com.vkm_backend.user.infra.web.controllers;
 
 
+import com.vkm_backend.user.infra.web.dto.AuthenticationRequest;
+import com.vkm_backend.user.infra.web.dto.AuthenticationResponse;
 import com.vkm_backend.user.infra.web.dto.RefreshTokenRequest;
 import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
 import com.vkm_backend.user.service.AccessTokenService;
-import com.vkm_backend.user.infra.web.dto.AuthenticationRequest;
-import com.vkm_backend.user.infra.web.dto.AuthenticationResponse;
 import com.vkm_backend.user.service.LogoutRequest;
 import com.vkm_backend.user.service.RefreshTokenService;
 import jakarta.validation.Valid;
@@ -49,8 +49,8 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     public ResponseEntity refresh(@Valid @RequestBody RefreshTokenRequest request){
 
-        RefreshTokenResult newsTokens = refreshTokenService.refresh(request.refreshToken());
-        return ResponseEntity.ok(new AuthenticationResponse(newsTokens.accessToken(), newsTokens.refreshToken()));
+        RefreshTokenResult newTokens = refreshTokenService.refresh(request.refreshToken());
+        return ResponseEntity.ok(new AuthenticationResponse(newTokens.accessToken(), newTokens.refreshToken()));
 
     }
 

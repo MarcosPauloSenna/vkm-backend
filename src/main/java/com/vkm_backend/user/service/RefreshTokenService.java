@@ -11,19 +11,22 @@ import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
-import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
+
+    private  final ZoneId ZONE = ZoneId.of("America/Sao_Paulo");
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -61,6 +64,10 @@ public class RefreshTokenService {
         entity.setExpiresAt(Instant.now().plus(expirationDays, ChronoUnit.DAYS));
 
         refreshTokenRepository.save(entity);
+
+        //grava data e hora do login
+        user.setLastLoginAt(LocalDateTime.now(ZONE));
+        userRepository.save(user);
 
         return rawToken;
     }
