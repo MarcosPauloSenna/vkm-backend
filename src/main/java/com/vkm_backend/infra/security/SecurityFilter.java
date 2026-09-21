@@ -1,14 +1,12 @@
 package com.vkm_backend.infra.security;
 
 
-import com.vkm_backend.infra.global.exceptions.ValidationException;
-import com.vkm_backend.user.service.AccessTokenService;
 import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.service.AccessTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

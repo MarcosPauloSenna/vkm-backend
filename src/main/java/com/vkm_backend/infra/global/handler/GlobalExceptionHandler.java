@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> validationException (ValidationException ex){
-        //ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, "", "VALIDATION_EXCEPTION");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, "Credencial inválida", "VALIDATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 
     }
 
@@ -77,19 +77,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> credentialsValidationException(BadCredentialsException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, ex.getMessage(), "CREDENTIAL_VERIFICATION_EXCEPTION");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "CREDENTIAL_VERIFICATION_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<ErrorResponse> authenticationValidationException(InternalAuthenticationServiceException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não é encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(EncryptionException.class)
     public ResponseEntity<ErrorResponse> encryptionException(EncryptionException ex){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),500, "usuário não é encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),500, "usuário não encontrado", "ENCRYPION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 

@@ -1,4 +1,4 @@
-package com.vkm_backend.user.dominio;
+package com.vkm_backend.user.domain;
 
 import lombok.Getter;
 
