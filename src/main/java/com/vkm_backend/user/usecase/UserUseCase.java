@@ -75,8 +75,18 @@ public class UserUseCase {
         return  userMapper.toResponse(userMapper.toDomain(user));
     }
 
+    @Transactional
     public UserResponse updateMe(UpdateUserRequest user, String username){
         UserEntity entity = userRepository.findByUsername(username);
+        if (user.nome() == null
+                && user.birthDate() == null
+                && user.phone() == null
+                && user.profilePhoto() == null) {
+
+            throw new BusinessException(
+                    "Nenhum dado informado para atualização.", 302
+            );
+        }
 
         if (user.nome() != null){
             entity.setName(user.nome());
@@ -97,5 +107,22 @@ public class UserUseCase {
         UserEntity userUpdated = userRepository.save(entity);
 
         return userMapper.toResponse(userMapper.toDomain(userUpdated));
+    }
+
+    @Transactional
+    public UserResponse updatePassword(String newPassword, String username){
+        UserEntity entity = userRepository.findByUsername(username);
+
+
+        if (newPassword != null){
+            entity.setPassword(passwordEncoder.encode(newPassword));
+        }else {
+            throw new BusinessException(
+                    "Nenhum dado informado para atualização.", 303);
+        }
+
+        UserEntity userPasswordUpdated = userRepository.save(entity);
+
+        return userMapper.toResponse(userMapper.toDomain(userPasswordUpdated));
     }
 }

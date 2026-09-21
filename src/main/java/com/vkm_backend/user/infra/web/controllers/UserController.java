@@ -1,6 +1,7 @@
 package com.vkm_backend.user.infra.web.controllers;
 
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
+import com.vkm_backend.user.infra.web.dto.UpdatePasswordRequest;
 import com.vkm_backend.user.infra.web.dto.UpdateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
 import com.vkm_backend.user.usecase.UserUseCase;
@@ -50,6 +51,14 @@ public class UserController {
 
     }
 
+
+    @PatchMapping("/password")
+    public  ResponseEntity<UserResponse> updatePassword(@Valid @RequestBody
+                                                            UpdatePasswordRequest request,
+                                                            Authentication authentication){
+
+        return ResponseEntity.ok(userUseCase.updatePassword(request.newPassword(), authentication.getName()));
+    }
 
 
 
