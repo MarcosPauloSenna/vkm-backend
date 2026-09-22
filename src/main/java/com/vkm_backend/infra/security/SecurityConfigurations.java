@@ -28,12 +28,17 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
-                            "/auth/refresh", "/auth/logout").permitAll()
+                            "/auth/refresh",
+                                "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/user/searchall" ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,
-                                "/api/v1/user/create", "/auth/login" ).permitAll()
+                                "/api/v1/user/create",
+                                "/auth/login" ).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

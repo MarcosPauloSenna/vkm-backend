@@ -1,6 +1,8 @@
 spring:
   application:
     name: vkm-backend
+  profiles:
+    default: local
 
   jpa:
     hibernate:
@@ -21,3 +23,8 @@ api:
     refresh-token:
       expiration-days: 14
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
