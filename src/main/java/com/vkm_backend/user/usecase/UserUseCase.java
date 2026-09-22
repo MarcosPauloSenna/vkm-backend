@@ -1,6 +1,7 @@
 package com.vkm_backend.user.usecase;
 
 import com.vkm_backend.infra.global.exceptions.BusinessException;
+import com.vkm_backend.infra.global.exceptions.ConflictException;
 import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.mapper.UserMapper;
 import com.vkm_backend.user.infra.persistence.UserEntity;
@@ -97,6 +98,9 @@ public class UserUseCase {
         }
 
         if (user.phone() != null){
+            if (userRepository.existsByPhone(user.phone())){
+                throw new ConflictException("O telefone informado já está cadastrado.");
+            }
             entity.setPhone(user.phone());
         }
 

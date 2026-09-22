@@ -4,7 +4,7 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/kvmdb
+    url: jdbc:postgresql://postgres:5432/kvmdb
     username: ${KEY_POSTGRES_USER}
     password: ${KEY_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
