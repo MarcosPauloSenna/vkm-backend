@@ -5,6 +5,8 @@ services:
     ports:
       - "8080:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: local
+      DB_URL: jdbc:postgresql://postgres:5432/${KEY_POSTGRES_DB}
       KEY_POSTGRES_DB: ${KEY_POSTGRES_DB}
       KEY_POSTGRES_USER: ${KEY_POSTGRES_USER}
       KEY_POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD}

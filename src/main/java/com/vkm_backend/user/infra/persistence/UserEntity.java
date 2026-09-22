@@ -42,11 +42,11 @@ public class UserEntity implements UserDetails {
     private  String password;
 
 
-    @Column(name = "active", nullable = false, columnDefinition = "DEFAULT 1")
+    @Column(name = "active", nullable = false)
     private  int active;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, columnDefinition = "DEFAULT 'USER'")
+    @Column(name = "role", nullable = false)
     private EnumRoleUser role;
 
     private  LocalDateTime lastLoginAt;
