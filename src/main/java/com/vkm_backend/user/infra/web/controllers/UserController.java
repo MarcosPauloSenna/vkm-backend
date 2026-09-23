@@ -36,7 +36,8 @@ public class UserController {
         @Operation(
             summary = "Criar usuário",
             description = "Cadastra um novo usuário, validando username e telefone únicos e armazenando a senha com hash BCrypt.",
-            tags = {"Usuários"}
+            tags = {"Usuários"},
+            security = {}
         )
         @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Usuário criado com sucesso",

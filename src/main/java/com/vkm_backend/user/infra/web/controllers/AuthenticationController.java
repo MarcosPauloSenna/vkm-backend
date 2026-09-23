@@ -44,7 +44,8 @@ public class AuthenticationController {
         @Operation(
             summary = "Autenticar usuário",
             description = "Valida as credenciais do usuário e retorna um access token JWT e um refresh token.",
-            tags = {"Autenticação"}
+            tags = {"Autenticação"},
+            security = {}
         )
         @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso",
@@ -73,7 +74,8 @@ public class AuthenticationController {
         @Operation(
             summary = "Renovar tokens de acesso",
             description = "Valida o refresh token, revoga o token atual e retorna um novo par de tokens.",
-            tags = {"Autenticação"}
+            tags = {"Autenticação"},
+            security = {}
         )
         @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Tokens renovados com sucesso",
@@ -95,7 +97,8 @@ public class AuthenticationController {
         @Operation(
             summary = "Encerrar sessão",
             description = "Revoga o refresh token informado e encerra a sessão correspondente.",
-            tags = {"Autenticação"}
+            tags = {"Autenticação"},
+            security = {}
         )
         @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Sessão encerrada com sucesso"),
