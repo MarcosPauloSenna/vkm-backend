@@ -9,6 +9,8 @@ import com.vkm_backend.infra.global.exceptions.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,12 +27,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private  final ZoneId ZONE = ZoneId.of("America/Sao_Paulo");
+    private final MessageSource messageSource;
+
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessException (BusinessException ex){
@@ -48,8 +57,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),status.value(), ex.getMessage(), request.getContextPath());
-        return ResponseEntity.status(status).body(error);
+        List<ErrorResponse> field = new ArrayList<>();
+        ex.getBindingResult().getFieldErrors().forEach(e -> {
+            String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
+            ErrorResponse error = new ErrorResponse(LocalDateTime.now(ZONE), status.value(), message, "Method_Argument_Not_Valid_Exception" );
+            field.add(error);
+        });
+        return ResponseEntity.status(status).body(field);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
