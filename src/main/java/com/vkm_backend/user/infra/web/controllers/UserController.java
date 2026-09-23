@@ -1,9 +1,6 @@
 package com.vkm_backend.user.infra.web.controllers;
 
-import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
-import com.vkm_backend.user.infra.web.dto.UpdatePasswordRequest;
-import com.vkm_backend.user.infra.web.dto.UpdateUserRequest;
-import com.vkm_backend.user.infra.web.dto.UserResponse;
+import com.vkm_backend.user.infra.web.dto.*;
 import com.vkm_backend.user.usecase.UserUseCase;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import jakarta.validation.Valid;
@@ -14,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +45,10 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Username ou telefone já cadastrado",
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
         })
-    public UserResponse saveUser(@Valid @RequestBody CreateUserRequest request){
+    public ResponseEntity<CreateUserResponse> saveUser(@Valid @RequestBody CreateUserRequest request){
 
-        return  userUseCase.createUser(request);
+        UserResponse response = userUseCase.createUser(request);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(new CreateUserResponse("Usuario cadastrado com Sucesso!",response));
     }
 
     @GetMapping("/searchall")
