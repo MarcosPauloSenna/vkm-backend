@@ -2,6 +2,7 @@ package com.vkm_backend.user.usecase;
 
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.ConflictException;
+import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
 import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.mapper.UserMapper;
 import com.vkm_backend.user.infra.persistence.UserEntity;
@@ -10,7 +11,6 @@ import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UpdateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
 import jakarta.transaction.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -73,13 +73,19 @@ public class UserUseCase {
 
     public UserResponse getMe(String userNamer){
         UserEntity user = userRepository.findByUsername(userNamer);
+        if (user == null) {
+            throw new ResourceNotFoundException(" Usuario não localizado! ");
+        }
         return  userMapper.toResponse(userMapper.toDomain(user));
     }
 
     @Transactional
     public UserResponse updateMe(UpdateUserRequest user, String username){
         UserEntity entity = userRepository.findByUsername(username);
-        if (user.nome() == null
+        if (entity == null) {
+            throw new ResourceNotFoundException(" Usuario não localizado! ");
+        }
+            if (user.nome() == null
                 && user.birthDate() == null
                 && user.phone() == null
                 && user.profilePhoto() == null) {
@@ -117,7 +123,9 @@ public class UserUseCase {
     public UserResponse updatePassword(String newPassword, String username){
         UserEntity entity = userRepository.findByUsername(username);
 
-
+        if (entity == null){
+            throw new ResourceNotFoundException(" Usuario não localizado! ");
+        }
         if (newPassword != null){
             entity.setPassword(passwordEncoder.encode(newPassword));
         }else {
