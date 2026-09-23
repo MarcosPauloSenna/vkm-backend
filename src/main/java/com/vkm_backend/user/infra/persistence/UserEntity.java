@@ -54,13 +54,6 @@ public class UserEntity extends Auditable implements UserDetails {
 
     private  LocalDateTime lastLoginAt;
 
-    @CreatedDate
-    @Column(name = "createdAt", nullable = false)
-    private  LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updatedAt", nullable = false)
-    private  LocalDateTime updatedAt;
 
     public UserEntity(long id,
                       String name,
@@ -71,9 +64,7 @@ public class UserEntity extends Auditable implements UserDetails {
                       String password,
                       int active,
                       EnumRoleUser role,
-                      LocalDateTime lastLoginAt,
-                      LocalDateTime createdAt,
-                      LocalDateTime updatedAt) {
+                      LocalDateTime lastLoginAt) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
@@ -84,8 +75,6 @@ public class UserEntity extends Auditable implements UserDetails {
         this.active = active;
         this.role = role;
         this.lastLoginAt = lastLoginAt;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public UserEntity() {

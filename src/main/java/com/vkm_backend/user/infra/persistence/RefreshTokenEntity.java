@@ -31,7 +31,7 @@ public class RefreshTokenEntity {
     private Instant expiresAt;
 
     @CreationTimestamp
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
     private Instant lastUsedAt;
     private Instant revokedAt;
