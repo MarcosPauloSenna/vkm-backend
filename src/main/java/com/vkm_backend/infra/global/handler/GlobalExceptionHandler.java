@@ -3,7 +3,6 @@ package com.vkm_backend.infra.global.handler;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.vkm_backend.infra.global.exceptions.*;
-import io.micrometer.core.ipc.http.HttpSender;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
@@ -142,6 +141,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resourceNotFoundException(ResourceNotFoundException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
         log.error(String.valueOf(ex));
@@ -150,6 +150,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(ForbiddenOperationException.class)
     public ResponseEntity<ErrorResponse> forbiddenOperationException(ForbiddenOperationException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
         log.error(String.valueOf(ex));

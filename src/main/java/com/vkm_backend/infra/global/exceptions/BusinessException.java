@@ -7,6 +7,8 @@ public class BusinessException extends RuntimeException{
 
     private int local;
 
+
+
     public BusinessException(String usuárioNãoEncontrado) {
         super("BUSINESS_EXCEPTION");
     }
