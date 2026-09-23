@@ -1,0 +1,3 @@
+ALTER TABLE users
+ADD COLUMN created_By BIGINT,
+ADD COLUMN updated_By BIGINT;

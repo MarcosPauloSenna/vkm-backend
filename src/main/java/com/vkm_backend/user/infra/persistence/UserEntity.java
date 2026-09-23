@@ -1,11 +1,14 @@
 package com.vkm_backend.user.infra.persistence;
 
+import com.vkm_backend.infra.audit.Auditable;
 import com.vkm_backend.user.domain.EnumRoleUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +22,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserEntity implements UserDetails {
+public class UserEntity extends Auditable implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,11 +54,11 @@ public class UserEntity implements UserDetails {
 
     private  LocalDateTime lastLoginAt;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "createdAt", nullable = false)
     private  LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "updatedAt", nullable = false)
     private  LocalDateTime updatedAt;
 
