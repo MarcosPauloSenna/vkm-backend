@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccessTokenService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.service</a> &gt; <span class="el_source">AccessTokenService.java</span></div><h1>AccessTokenService.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.service;
+
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.vkm_backend.infra.global.handler.ErrorResponse;
+import com.vkm_backend.infra.security.exception.TokenValidationResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+
+@Service
+<span class="fc" id="L21">public class AccessTokenService {</span>
+
+    @Value(&quot;${api.security.token.secret}&quot;)
+    private String secret;
+
+    @Value(&quot;${api.security.token.expiration-minutes}&quot;)
+    private Integer expirationMinutes;
+
+<span class="fc" id="L29">    private  final ZoneId ZONE = ZoneId.of(&quot;America/Sao_Paulo&quot;);</span>
+
+
+    public String generateAccessTokens(UserDetails user){
+
+<span class="fc" id="L34">        Algorithm algorithm = Algorithm.HMAC256(secret);</span>
+<span class="fc" id="L35">        String token = JWT.create()</span>
+<span class="fc" id="L36">                .withIssuer(&quot;auth-api&quot;)</span>
+<span class="fc" id="L37">                .withSubject(user.getUsername())</span>
+<span class="fc" id="L38">                .withExpiresAt(generateExpirationDate())</span>
+<span class="fc" id="L39">                .sign(algorithm);</span>
+<span class="fc" id="L40">        return token;</span>
+    }
+
+    public TokenValidationResult validationAccessToken(String token) {
+
+        try {
+
+<span class="fc" id="L47">            Algorithm algorithm = Algorithm.HMAC256(secret);</span>
+
+<span class="fc" id="L49">            DecodedJWT decodedJWT = JWT.require(algorithm)</span>
+<span class="fc" id="L50">                    .withIssuer(&quot;auth-api&quot;)</span>
+<span class="fc" id="L51">                    .build()</span>
+<span class="fc" id="L52">                    .verify(token);</span>
+
+<span class="fc" id="L54">            return TokenValidationResult.valid(</span>
+<span class="fc" id="L55">                    decodedJWT.getSubject()</span>
+            );
+
+<span class="fc" id="L58">        } catch (TokenExpiredException e) {</span>
+
+<span class="fc" id="L60">            return TokenValidationResult.expired(</span>
+                    new ErrorResponse(
+<span class="fc" id="L62">                            LocalDateTime.now(ZONE),</span>
+                            401,
+                            &quot;Token de acesso expirado.&quot;,
+                            &quot;TOKEN_EXPIRED&quot;
+                    )
+            );
+
+<span class="fc" id="L69">        } catch (JWTVerificationException e) {</span>
+
+<span class="fc" id="L71">            return TokenValidationResult.invalid(</span>
+                    new ErrorResponse(
+<span class="fc" id="L73">                            LocalDateTime.now(ZONE),</span>
+                            401,
+                            &quot;Token de acesso inválido.&quot;,
+                            &quot;TOKEN_INVALID&quot;
+                    )
+            );
+        }
+    }
+
+    private Instant generateExpirationDate(){
+<span class="fc" id="L83">        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of(&quot;-03:00&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -102,9 +102,12 @@ public class UserUseCase {
             entity.setBirthDate(user.birthDate());
         }
 
+
         if (user.phone() != null){
-            if (userRepository.existsByPhone(user.phone())){
+            if (userRepository.existsByPhoneAndIdNot(user.phone(), entity.getId())){
+
                 throw new ConflictException("O telefone informado já está cadastrado.");
+
             }
             entity.setPhone(user.phone());
         }

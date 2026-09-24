@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginIT.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.integration.auth</a> &gt; <span class="el_source">LoginIT.java</span></div><h1>LoginIT.java</h1><pre class="source lang-java linenums">package com.vkm_backend.integration.auth;
+
+import com.vkm_backend.integration.AbstractIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+<span class="fc" id="L12">class LoginIT extends AbstractIntegrationTest {</span>
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void shouldLoginWithValidCredentials() throws Exception {
+
+<span class="fc" id="L20">        createUser();</span>
+
+<span class="fc" id="L22">        mockMvc.perform(</span>
+<span class="fc" id="L23">                post(&quot;/auth/login&quot;)</span>
+<span class="fc" id="L24">                        .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L25">                        .content(&quot;&quot;&quot;</span>
+                                {
+                                  &quot;username&quot;: &quot;login-test&quot;,
+                                  &quot;password&quot;: &quot;12345678&quot;
+                                }
+                                &quot;&quot;&quot;)
+        )
+<span class="fc" id="L32">        .andExpect(status().isOk())</span>
+<span class="fc" id="L33">        .andExpect(jsonPath(&quot;$.accessToken&quot;).isNotEmpty());</span>
+<span class="fc" id="L34">    }</span>
+
+    @Test
+    void shouldRejectInvalidPassword() throws Exception {
+
+<span class="fc" id="L39">        createUser();</span>
+
+<span class="fc" id="L41">        mockMvc.perform(</span>
+<span class="fc" id="L42">                post(&quot;/auth/login&quot;)</span>
+<span class="fc" id="L43">                        .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L44">                        .content(&quot;&quot;&quot;</span>
+                                {
+                                  &quot;username&quot;: &quot;login-test&quot;,
+                                  &quot;password&quot;: &quot;senha-errada&quot;
+                                }
+                                &quot;&quot;&quot;)
+        )
+<span class="fc" id="L51">        .andExpect(status().isUnauthorized());</span>
+<span class="fc" id="L52">    }</span>
+
+    @Test
+    void shouldRejectUnknownUser() throws Exception {
+
+<span class="fc" id="L57">        mockMvc.perform(</span>
+<span class="fc" id="L58">                post(&quot;/auth/login&quot;)</span>
+<span class="fc" id="L59">                        .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L60">                        .content(&quot;&quot;&quot;</span>
+                                {
+                                  &quot;username&quot;: &quot;nao-existe&quot;,
+                                  &quot;password&quot;: &quot;12345678&quot;
+                                }
+                                &quot;&quot;&quot;)
+        )
+<span class="fc" id="L67">        .andExpect(status().isUnauthorized());</span>
+<span class="fc" id="L68">    }</span>
+
+    private void createUser() throws Exception {
+<span class="fc" id="L71">        mockMvc.perform(</span>
+<span class="fc" id="L72">                post(&quot;/api/v1/user/create&quot;)</span>
+<span class="fc" id="L73">                        .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L74">                        .content(&quot;&quot;&quot;</span>
+                                {
+                                  &quot;name&quot;: &quot;Login Test&quot;,
+                                  &quot;birthDate&quot;: &quot;01/01/1991&quot;,
+                                  &quot;phone&quot;: &quot;75999999991&quot;,
+                                  &quot;profilePhoto&quot;: null,
+                                  &quot;username&quot;: &quot;login-test&quot;,
+                                  &quot;password&quot;: &quot;12345678&quot;
+                                }
+                                &quot;&quot;&quot;)
+        );
+<span class="fc" id="L85">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

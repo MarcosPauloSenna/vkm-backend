@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.infra.persistence</a> &gt; <span class="el_source">UserEntity.java</span></div><h1>UserEntity.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.infra.persistence;
+
+import com.vkm_backend.infra.audit.Auditable;
+import com.vkm_backend.user.domain.EnumRoleUser;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(name = &quot;users&quot;)
+public class UserEntity extends Auditable implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;name&quot;, nullable = false)
+    private  String name;
+
+    private  LocalDate birthDate;
+
+    @Column(name = &quot;phone&quot;, unique = true, nullable = false)
+    private  String phone;
+
+    private  String profilePhoto;
+
+    @Column(name = &quot;username&quot;, unique = true, nullable = false)
+    private  String username;
+
+    @Column(name = &quot;password&quot;, nullable = false)
+    private  String password;
+
+
+    @Column(name = &quot;active&quot;, nullable = false)
+    private  int active;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;role&quot;, nullable = false)
+    private EnumRoleUser role;
+
+    private  LocalDateTime lastLoginAt;
+
+
+    public UserEntity(long id,
+                      String name,
+                      LocalDate birthDate,
+                      String phone,
+                      String profilePhoto,
+                      String username,
+                      String password,
+                      int active,
+                      EnumRoleUser role,
+<span class="nc" id="L67">                      LocalDateTime lastLoginAt) {</span>
+<span class="nc" id="L68">        this.id = id;</span>
+<span class="nc" id="L69">        this.name = name;</span>
+<span class="nc" id="L70">        this.birthDate = birthDate;</span>
+<span class="nc" id="L71">        this.phone = phone;</span>
+<span class="nc" id="L72">        this.profilePhoto = profilePhoto;</span>
+<span class="nc" id="L73">        this.username = username;</span>
+<span class="nc" id="L74">        this.password = password;</span>
+<span class="nc" id="L75">        this.active = active;</span>
+<span class="nc" id="L76">        this.role = role;</span>
+<span class="nc" id="L77">        this.lastLoginAt = lastLoginAt;</span>
+<span class="nc" id="L78">    }</span>
+
+<span class="fc" id="L80">    public UserEntity() {</span>
+<span class="fc" id="L81">    }</span>
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (this.role.equals(EnumRoleUser.ADMIN)) return List.of(new SimpleGrantedAuthority(&quot;ROLE_ADMIN&quot;),</span>
+                    new SimpleGrantedAuthority(&quot;ROLE_USER&quot;));
+        else
+<span class="fc" id="L88">            return List.of(new SimpleGrantedAuthority(&quot;ROLE_USER&quot;));</span>
+
+
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+<span class="fc" id="L95">        return true;</span>
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+<span class="fc" id="L100">        return true;</span>
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+<span class="fc" id="L105">        return true;</span>
+    }
+
+    @Override
+    public boolean isEnabled() {
+       
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        return  this.active == 1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

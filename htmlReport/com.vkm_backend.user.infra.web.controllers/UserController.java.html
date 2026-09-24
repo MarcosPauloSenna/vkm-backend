@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.infra.web.controllers</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.infra.web.controllers;
+
+import com.vkm_backend.user.infra.web.dto.*;
+import com.vkm_backend.user.usecase.UserUseCase;
+import com.vkm_backend.infra.global.handler.ErrorResponse;
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/v1/user&quot;)
+@Tag(name = &quot;Usuários&quot;, description = &quot;Cadastro, consulta e manutenção de usuários&quot;)
+public class UserController {
+
+    private  final UserUseCase userUseCase;
+
+<span class="fc" id="L28">    public UserController(UserUseCase userUseCase) {</span>
+
+<span class="fc" id="L30">        this.userUseCase = userUseCase;</span>
+<span class="fc" id="L31">    }</span>
+
+    @PostMapping(&quot;/create&quot;)
+        @Operation(
+            summary = &quot;Criar usuário&quot;,
+            description = &quot;Cadastra um novo usuário, validando username e telefone únicos e armazenando a senha com hash BCrypt.&quot;,
+            tags = {&quot;Usuários&quot;},
+            security = {}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Usuário criado com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Dados obrigatórios ausentes ou inválidos&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Username ou telefone já cadastrado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity&lt;CreateUserResponse&gt; saveUser(@Valid @RequestBody CreateUserRequest request){
+
+<span class="fc" id="L50">        UserResponse response = userUseCase.createUser(request);</span>
+<span class="fc" id="L51">        return  ResponseEntity.status(HttpStatus.CREATED).body(new CreateUserResponse(&quot;Usuario cadastrado com Sucesso!&quot;,response));</span>
+    }
+
+    @GetMapping(&quot;/searchall&quot;)
+        @Operation(
+            summary = &quot;Listar todos os usuários&quot;,
+            description = &quot;Retorna todos os usuários cadastrados. Operação restrita a usuários com papel administrativo.&quot;,
+            tags = {&quot;Usuários&quot;}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Usuários retornados com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Token de acesso ausente ou inválido&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Usuário sem permissão administrativa&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public List&lt;UserResponse&gt; findAllUsers(){
+
+<span class="nc" id="L70">        return userUseCase.listAllUsers();</span>
+
+    }
+
+    @GetMapping(&quot;/me&quot;)
+        @Operation(
+            summary = &quot;Consultar meu perfil&quot;,
+            description = &quot;Retorna os dados do usuário identificado pelo access token enviado na requisição.&quot;,
+            tags = {&quot;Usuários&quot;}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Perfil retornado com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Token de acesso ausente ou inválido&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Usuário autenticado não encontrado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity&lt;UserResponse&gt; getMe(Authentication authentication){
+
+
+<span class="nc" id="L91">        return ResponseEntity.ok(userUseCase.getMe(authentication.getName()));</span>
+
+    }
+
+    @PatchMapping(&quot;/me&quot;)
+        @Operation(
+            summary = &quot;Atualizar meu perfil&quot;,
+            description = &quot;Atualiza parcialmente os dados do perfil do usuário autenticado.&quot;,
+            tags = {&quot;Usuários&quot;}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Perfil atualizado com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Nenhum dado informado ou dados inválidos&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Token de acesso ausente ou inválido&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Telefone já cadastrado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity&lt;UserResponse&gt; updateMe(@Valid @RequestBody UpdateUserRequest user,Authentication authentication){
+
+<span class="fc" id="L113">        return ResponseEntity.ok(userUseCase.updateMe(user, authentication.getName()));</span>
+
+    }
+
+
+    @PatchMapping(&quot;/password&quot;)
+        @Operation(
+            summary = &quot;Atualizar senha&quot;,
+            description = &quot;Substitui a senha do usuário autenticado e armazena o novo valor com hash BCrypt.&quot;,
+            tags = {&quot;Usuários&quot;}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Senha atualizada com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Senha ausente ou inválida&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Token de acesso ausente ou inválido&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public  ResponseEntity&lt;UserResponse&gt; updatePassword(@Valid @RequestBody
+                                                            UpdatePasswordRequest request,
+                                                            Authentication authentication){
+
+<span class="fc" id="L136">        return ResponseEntity.ok(userUseCase.updatePassword(request.newPassword(), authentication.getName()));</span>
+    }
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

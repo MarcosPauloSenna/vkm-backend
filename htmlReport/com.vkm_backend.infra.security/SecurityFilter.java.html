@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.infra.security</a> &gt; <span class="el_source">SecurityFilter.java</span></div><h1>SecurityFilter.java</h1><pre class="source lang-java linenums">package com.vkm_backend.infra.security;
+
+
+import com.vkm_backend.infra.security.exception.TokenValidationResult;
+import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.service.AccessTokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Component
+public class SecurityFilter extends OncePerRequestFilter {
+
+
+    public final AccessTokenService accessTokenService;
+
+
+    public final UserRepository userRepository;
+    private AuthenticationEntryPoint authenticationEntryPoint;
+
+<span class="fc" id="L34">    public SecurityFilter(AccessTokenService accessTokenService, UserRepository userRepository) {</span>
+<span class="fc" id="L35">        this.accessTokenService = accessTokenService;</span>
+<span class="fc" id="L36">        this.userRepository = userRepository;</span>
+<span class="fc" id="L37">    }</span>
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+<span class="fc" id="L41">        var token = this.recoverToken(request);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (token != null){</span>
+<span class="fc" id="L43">            var result = accessTokenService.validationAccessToken(token);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if (result.status() != TokenValidationResult.Status.INVALID){</span>
+<span class="fc" id="L45">                request.setAttribute(&quot;AUTH_ERROR&quot;, result.errorResponse());</span>
+            }
+
+<span class="fc" id="L48">            var username = result.username();</span>
+<span class="fc" id="L49">            UserDetails user = userRepository.findByUsername(username);</span>
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">            if (user == null || !user.isEnabled()) {</span>
+<span class="fc" id="L51">                filterChain.doFilter(request, response);</span>
+<span class="fc" id="L52">                return;</span>
+            }
+<span class="fc" id="L54">            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());</span>
+<span class="fc" id="L55">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+        }
+<span class="fc" id="L57">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L58">    }</span>
+
+    private String recoverToken(HttpServletRequest request){
+<span class="fc" id="L61">        var authHeader = request.getHeader(&quot;Authorization&quot;);</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">        if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {return null;}</span>
+<span class="fc" id="L63">        return authHeader.substring(7);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

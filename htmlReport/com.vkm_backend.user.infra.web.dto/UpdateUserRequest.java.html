@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateUserRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.infra.web.dto</a> &gt; <span class="el_source">UpdateUserRequest.java</span></div><h1>UpdateUserRequest.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.infra.web.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Schema(description = &quot;Dados opcionais para atualizar o perfil do usuário autenticado&quot;)
+<span class="fc" id="L12">public record UpdateUserRequest(</span>
+
+        @Size(max = 100, message = &quot;Nome deve possuir no máximo 100 caracteres&quot;)
+        @Schema(description = &quot;Novo nome completo&quot;, example = &quot;João da Silva&quot;, maxLength = 100)
+        String nome,
+
+        @JsonFormat(pattern = &quot;dd/MM/yyyy&quot;)
+        @Schema(description = &quot;Nova data de nascimento no formato dd/MM/yyyy&quot;, example = &quot;15/08/1995&quot;, type = &quot;string&quot;)
+        LocalDate birthDate,
+
+        @Size(max = 11, min = 10, message = &quot;O telefone deve possuir 11 caracteres&quot; +
+                &quot; no formato DDD+9+NUMERO&quot;)
+        @Schema(description = &quot;Novo telefone com DDD, sem pontuação&quot;, example = &quot;11987654321&quot;, minLength = 10, maxLength = 11)
+        String phone,
+
+        @Schema(description = &quot;Nova URL da foto de perfil&quot;, example = &quot;https://cdn.exemplo.com/perfil/joao-atualizado.jpg&quot;)
+        String profilePhoto) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

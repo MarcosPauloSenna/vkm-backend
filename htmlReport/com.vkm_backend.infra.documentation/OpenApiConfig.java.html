@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpenApiConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.infra.documentation</a> &gt; <span class="el_source">OpenApiConfig.java</span></div><h1>OpenApiConfig.java</h1><pre class="source lang-java linenums">package com.vkm_backend.infra.documentation;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = &quot;KVM Backend API&quot;,
+                version = &quot;v1&quot;,
+                description = &quot;API REST do KVM para cadastro de usuários, autenticação e gerenciamento futuro de grupos, membros, times, partidas e torneios.&quot;,
+                contact = @Contact(
+                        name = &quot;Equipe KVM&quot;,
+                        email = &quot;suporte@kvm.local&quot;
+                ),
+                license = @License(
+                        name = &quot;Uso interno do projeto KVM&quot;
+                )
+        ),
+        servers = {
+                @Server(
+                        url = &quot;http://localhost:8080&quot;,
+                        description = &quot;Ambiente local ou Docker Compose&quot;
+                )
+        },
+        tags = {
+                @Tag(
+                        name = &quot;Autenticação&quot;,
+                        description = &quot;Login, renovação de tokens e encerramento de sessões&quot;
+                ),
+                @Tag(
+                        name = &quot;Usuários&quot;,
+                        description = &quot;Cadastro, consulta e atualização de usuários&quot;
+                ),
+                @Tag(
+                        name = &quot;Grupos&quot;,
+                        description = &quot;Operações futuras de grupos e participação de membros&quot;
+                )
+        },
+        security = {
+                @SecurityRequirement(name = &quot;bearerAuth&quot;)
+        }
+)
+@SecurityScheme(
+        name = &quot;bearerAuth&quot;,
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER,
+        scheme = &quot;bearer&quot;,
+        bearerFormat = &quot;JWT&quot;,
+        description = &quot;Access token JWT. Informe apenas o token; o Swagger adicionará o prefixo Bearer automaticamente.&quot;
+)
+<span class="fc" id="L61">public class OpenApiConfig {</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

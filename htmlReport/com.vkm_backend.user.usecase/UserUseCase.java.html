@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserUseCase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.usecase</a> &gt; <span class="el_source">UserUseCase.java</span></div><h1>UserUseCase.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.usecase;
+
+import com.vkm_backend.infra.global.exceptions.BusinessException;
+import com.vkm_backend.infra.global.exceptions.ConflictException;
+import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
+import com.vkm_backend.user.domain.User;
+import com.vkm_backend.user.infra.mapper.UserMapper;
+import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
+import com.vkm_backend.user.infra.web.dto.UpdateUserRequest;
+import com.vkm_backend.user.infra.web.dto.UserResponse;
+import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class UserUseCase {
+
+
+    private final UserRepository userRepository;
+
+    private   final  UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+<span class="fc" id="L30">    public UserUseCase(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L31">        this.userRepository = userRepository;</span>
+
+<span class="fc" id="L33">        this.userMapper = userMapper;</span>
+<span class="fc" id="L34">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L35">    }</span>
+
+    @Transactional
+    public UserResponse createUser( CreateUserRequest request){
+
+<span class="fc" id="L40">        User user = userMapper.fromUser(request);</span>
+<span class="fc" id="L41">        UserEntity entity =  userMapper.toEntity(user);</span>
+        // validando Username e Phone
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (userRepository.existsByUsername(entity.getUsername())){</span>
+<span class="fc" id="L44">            throw new BusinessException(&quot;Nome de usuario: &quot; +entity.getUsername()+ &quot;, já esta cadastrado. Digite outro nome de usuario! &quot;);</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        }else if (userRepository.existsByPhone(entity.getPhone())) {</span>
+<span class="nc" id="L46">            throw new BusinessException(&quot;Telefone: &quot; +entity.getPhone()+ &quot;, já esta cadastrado. Digite outro Telefone! &quot;);</span>
+        };
+
+        //Criando hash password
+<span class="fc" id="L50">        entity.setPassword(passwordEncoder.encode(entity.getPassword()));</span>
+
+<span class="fc" id="L52">        UserEntity userCreated = userRepository.save(entity);</span>
+
+
+<span class="fc" id="L55">        return userMapper.toResponse(userMapper.toDomain(userCreated));</span>
+
+    }
+
+
+    public List&lt;UserResponse&gt; listAllUsers(){
+<span class="nc" id="L61">         List&lt;UserResponse&gt; users = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L63">         List&lt;UserEntity&gt; usersEnt = userRepository.findAll();</span>
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">         for (UserEntity userEnt: usersEnt){</span>
+<span class="nc" id="L66">             User user = userMapper.toDomain(userEnt);</span>
+<span class="nc" id="L67">             users.add(userMapper.toResponse(user));</span>
+<span class="nc" id="L68">         }</span>
+
+<span class="nc" id="L70">         return users;</span>
+    }
+
+
+    public UserResponse getMe(String userNamer){
+<span class="nc" id="L75">        UserEntity user = userRepository.findByUsername(userNamer);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (user == null) {</span>
+<span class="nc" id="L77">            throw new ResourceNotFoundException(&quot; Usuario não localizado! &quot;);</span>
+        }
+<span class="nc" id="L79">        return  userMapper.toResponse(userMapper.toDomain(user));</span>
+    }
+
+    @Transactional
+    public UserResponse updateMe(UpdateUserRequest user, String username){
+<span class="fc" id="L84">        UserEntity entity = userRepository.findByUsername(username);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (entity == null) {</span>
+<span class="nc" id="L86">            throw new ResourceNotFoundException(&quot; Usuario não localizado! &quot;);</span>
+        }
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (user.nome() == null</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                &amp;&amp; user.birthDate() == null</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">                &amp;&amp; user.phone() == null</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                &amp;&amp; user.profilePhoto() == null) {</span>
+
+<span class="nc" id="L93">            throw new BusinessException(</span>
+                    &quot;Nenhum dado informado para atualização.&quot;);
+        }
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (user.nome() != null){</span>
+<span class="fc" id="L98">            entity.setName(user.nome());</span>
+        }
+
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (user.birthDate() != null){</span>
+<span class="nc" id="L102">            entity.setBirthDate(user.birthDate());</span>
+        }
+
+
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (user.phone() != null){</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (userRepository.existsByPhoneAndIdNot(user.phone(), entity.getId())){</span>
+
+<span class="fc" id="L109">                throw new ConflictException(&quot;O telefone informado já está cadastrado.&quot;);</span>
+
+            }
+<span class="fc" id="L112">            entity.setPhone(user.phone());</span>
+        }
+
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (user.profilePhoto() != null){</span>
+<span class="nc" id="L116">            entity.setProfilePhoto(user.profilePhoto());</span>
+        }
+
+<span class="fc" id="L119">        UserEntity userUpdated = userRepository.save(entity);</span>
+
+<span class="fc" id="L121">        return userMapper.toResponse(userMapper.toDomain(userUpdated));</span>
+    }
+
+    @Transactional
+    public UserResponse updatePassword(String newPassword, String username){
+<span class="fc" id="L126">        UserEntity entity = userRepository.findByUsername(username);</span>
+
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (entity == null){</span>
+<span class="nc" id="L129">            throw new ResourceNotFoundException(&quot; Usuario não localizado! &quot;);</span>
+        }
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (newPassword != null){</span>
+<span class="fc" id="L132">            entity.setPassword(passwordEncoder.encode(newPassword));</span>
+        }else {
+<span class="nc" id="L134">            throw new BusinessException(</span>
+                    &quot;Nenhum dado informado para atualização.&quot;);
+        }
+
+<span class="fc" id="L138">        UserEntity userPasswordUpdated = userRepository.save(entity);</span>
+
+<span class="fc" id="L140">        return userMapper.toResponse(userMapper.toDomain(userPasswordUpdated));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

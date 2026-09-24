@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.infra.global.handler</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.vkm_backend.infra.global.handler;
+
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.vkm_backend.infra.global.exceptions.*;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+
+
+<span class="fc" id="L30">@Slf4j(topic = &quot;GLOBAL_EXCEPTION_HANDLER&quot;)</span>
+@RestControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+<span class="fc" id="L34">    private  final ZoneId ZONE = ZoneId.of(&quot;America/Sao_Paulo&quot;);</span>
+    private final MessageSource messageSource;
+
+<span class="fc" id="L37">    public GlobalExceptionHandler(MessageSource messageSource) {</span>
+<span class="fc" id="L38">        this.messageSource = messageSource;</span>
+<span class="fc" id="L39">    }</span>
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; businessException (BusinessException ex,  HttpServletRequest request){
+<span class="fc" id="L43">        String endPoint =  request.getRequestURI();</span>
+<span class="fc" id="L44">        logOrigin(ex);</span>
+<span class="fc" id="L45">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="fc" id="L46">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), &quot;BUSINESS_EXCEPTION&quot;);</span>
+<span class="fc" id="L47">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);</span>
+
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; validationException (ValidationException ex,  HttpServletRequest request){
+<span class="fc" id="L53">        String endPoint =  request.getRequestURI();</span>
+<span class="fc" id="L54">        logOrigin(ex);</span>
+<span class="fc" id="L55">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+        String message;
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if(ex.getMessage() == null){  message = &quot;Credencial inválida&quot;;  }else {message = ex.getMessage();}</span>
+<span class="fc" id="L58">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401,message, &quot;VALIDATION_EXCEPTION&quot;);</span>
+<span class="fc" id="L59">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);</span>
+
+    }
+
+    @Override
+    protected @Nullable ResponseEntity&lt;Object&gt; handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+<span class="fc" id="L65">        List&lt;ErrorResponse&gt; field = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L66">        String path = request.getDescription(false).replaceFirst(&quot;^uri=&quot;, &quot;&quot;);</span>
+<span class="fc" id="L67">        logOrigin(ex);</span>
+<span class="fc" id="L68">        log.error(&quot;Endpoint da requisição: {}&quot;, path);</span>
+<span class="fc" id="L69">        ex.getBindingResult().getFieldErrors().forEach(e -&gt; {</span>
+<span class="fc" id="L70">            String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());</span>
+<span class="fc" id="L71">            ErrorResponse error = new ErrorResponse(LocalDateTime.now(ZONE), status.value(), message, &quot;METHOD_ARGUMENT_NOT_VALID_EXCEPTION&quot; );</span>
+<span class="fc" id="L72">            field.add(error);</span>
+<span class="fc" id="L73">        });</span>
+<span class="fc" id="L74">        return ResponseEntity.status(status).body(field);</span>
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; dataIntegrityViolationException(
+            DataIntegrityViolationException ex, HttpServletRequest request) {
+
+<span class="nc" id="L81">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L82">        logOrigin(ex);</span>
+<span class="nc" id="L83">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L84">        log.error(&quot;Violação de integridade no banco de dados&quot;, ex);</span>
+
+<span class="nc" id="L86">        ErrorResponse error = new ErrorResponse(</span>
+<span class="nc" id="L87">                LocalDateTime.now(ZONE),</span>
+<span class="nc" id="L88">                HttpStatus.CONFLICT.value(),</span>
+                &quot;Não foi possível concluir a operação porque um dado informado já está cadastrado.&quot;,
+                &quot;DATA_INTEGRITY_VIOLATION&quot;
+        );
+
+<span class="nc" id="L93">        return ResponseEntity</span>
+<span class="nc" id="L94">                .status(HttpStatus.CONFLICT)</span>
+<span class="nc" id="L95">                .body(error);</span>
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; conflictException(ConflictException ex, HttpServletRequest request){
+<span class="fc" id="L100">        String endPoint =  request.getRequestURI();</span>
+<span class="fc" id="L101">        logOrigin(ex);</span>
+<span class="fc" id="L102">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="fc" id="L103">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.CONFLICT.value(), ex.getMessage(),&quot;CONFLICT_EXCEPTION&quot;);</span>
+<span class="fc" id="L104">        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);</span>
+    }
+
+
+    @ExceptionHandler(JWTCreationException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; jwtCreationException(JWTCreationException ex, HttpServletRequest request){
+<span class="nc" id="L110">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), &quot;JWT_CRREATION_EXCEPTION.&quot;);</span>
+<span class="nc" id="L111">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L112">        logOrigin(ex);</span>
+<span class="nc" id="L113">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L114">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);</span>
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; jwtValidationException(JWTVerificationException ex, HttpServletRequest request){
+<span class="nc" id="L119">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), &quot;JWT_VERIFICATION_EXCEPTION.&quot;);</span>
+<span class="nc" id="L120">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L121">        logOrigin(ex);</span>
+<span class="nc" id="L122">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L123">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);</span>
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; credentialsValidationException(BadCredentialsException ex,  HttpServletRequest request){
+<span class="fc" id="L128">        String endPoint =  request.getRequestURI();</span>
+<span class="fc" id="L129">        logOrigin(ex);</span>
+<span class="fc" id="L130">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="fc" id="L131">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.UNAUTHORIZED.value(), &quot;Usuario ou Senha invalida!&quot;, &quot;CREDENTIAL_VERIFICATION_EXCEPTION&quot;);</span>
+<span class="fc" id="L132">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);</span>
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; authenticationValidationException(InternalAuthenticationServiceException ex,  HttpServletRequest request){
+<span class="nc" id="L137">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L138">        logOrigin(ex);</span>
+<span class="nc" id="L139">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L140">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, &quot;usuário não encontrado&quot;, &quot;AUTHENTICATION_VERIFICATION_EXCEPTION&quot;);</span>
+<span class="nc" id="L141">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);</span>
+    }
+
+    @ExceptionHandler(EncryptionException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; encryptionException(EncryptionException ex,  HttpServletRequest request){
+<span class="nc" id="L146">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L147">        logOrigin(ex);</span>
+<span class="nc" id="L148">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L149">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),500, &quot;usuário não encontrado&quot;, &quot;ENCRYPION_EXCEPTION&quot;);</span>
+<span class="nc" id="L150">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);</span>
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; resourceNotFoundException(ResourceNotFoundException ex,  HttpServletRequest request){
+<span class="nc" id="L155">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L156">        logOrigin(ex);</span>
+<span class="nc" id="L157">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L158">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value(), ex.getMessage(),&quot;RESOURCE_NOT_FOUND&quot;);</span>
+<span class="nc" id="L159">        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);</span>
+    }
+
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; forbiddenOperationException(ForbiddenOperationException ex,  HttpServletRequest request){
+<span class="nc" id="L164">        String endPoint =  request.getRequestURI();</span>
+<span class="nc" id="L165">        logOrigin(ex);</span>
+<span class="nc" id="L166">        log.error(&quot;Endpoint da requisição: {}&quot;, endPoint);</span>
+<span class="nc" id="L167">        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.FORBIDDEN.value(), ex.getMessage(),&quot;FORBIDDEN_OPERATION&quot;);</span>
+<span class="nc" id="L168">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);</span>
+    }
+
+    private void logOrigin(Exception ex) {
+<span class="fc" id="L172">        StackTraceElement origin = findProjectOrigin(ex);</span>
+
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (origin == null) {</span>
+<span class="nc" id="L175">            log.error(&quot;Erro sem origem identificável&quot;, ex);</span>
+<span class="nc" id="L176">            return;</span>
+        }
+
+<span class="fc" id="L179">        String source = origin.getClassName().replace('.', '/')</span>
+<span class="fc" id="L180">                + &quot;.java:&quot; + origin.getLineNumber();</span>
+
+<span class="fc" id="L182">        log.error(</span>
+                &quot;Erro disparado em: {}. método={}&quot;,
+                source,
+<span class="fc" id="L185">                origin.getMethodName()</span>
+        );
+<span class="fc" id="L187">    }</span>
+
+    private StackTraceElement findProjectOrigin(Exception ex) {
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        for (StackTraceElement element : ex.getStackTrace()) {</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            if (element.getClassName().startsWith(&quot;com.vkm_backend&quot;)) {</span>
+<span class="fc" id="L192">                return element;</span>
+            }
+        }
+
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        return ex.getStackTrace().length &gt; 0</span>
+<span class="nc" id="L197">                ? ex.getStackTrace()[0]</span>
+<span class="nc" id="L198">                : null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

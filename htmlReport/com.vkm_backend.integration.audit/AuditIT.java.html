@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuditIT.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.integration.audit</a> &gt; <span class="el_source">AuditIT.java</span></div><h1>AuditIT.java</h1><pre class="source lang-java linenums">package com.vkm_backend.integration.audit;
+
+import com.vkm_backend.integration.AbstractIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+<span class="fc" id="L19">class AuditIT extends AbstractIntegrationTest {</span>
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    void shouldHaveAuditColumnsInUsersTable() {
+
+<span class="fc" id="L30">        Integer count = jdbcTemplate.queryForObject(</span>
+                &quot;&quot;&quot;
+                SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'users'
+                  AND column_name IN ('created_at', 'updated_at')
+                &quot;&quot;&quot;,
+                Integer.class
+        );
+
+<span class="fc" id="L41">        assertThat(count).isEqualTo(2);</span>
+<span class="fc" id="L42">    }</span>
+
+    @Test
+        void shouldPopulateAuditTimestampsWhenUserIsCreated() throws Exception {
+<span class="fc" id="L46">        mockMvc.perform(</span>
+<span class="fc" id="L47">                post(&quot;/api/v1/user/create&quot;)</span>
+<span class="fc" id="L48">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L49">                    .content(&quot;&quot;&quot;</span>
+                        {
+                          &quot;name&quot;: &quot;Audit Test&quot;,
+                          &quot;birthDate&quot;: &quot;01/01/1991&quot;,
+                          &quot;phone&quot;: &quot;75999999995&quot;,
+                          &quot;profilePhoto&quot;: null,
+                          &quot;username&quot;: &quot;audituser&quot;,
+                          &quot;password&quot;: &quot;12345678&quot;
+                        }
+                        &quot;&quot;&quot;)
+            )
+<span class="fc" id="L60">            .andExpect(status().isCreated());</span>
+
+<span class="fc" id="L62">        LocalDateTime[] timestamps = jdbcTemplate.queryForObject(</span>
+            &quot;&quot;&quot;
+            SELECT created_at, updated_at
+            FROM users
+            WHERE username = ?
+            &quot;&quot;&quot;,
+<span class="fc" id="L68">            (resultSet, rowNum) -&gt; new LocalDateTime[]{</span>
+<span class="fc" id="L69">                resultSet.getObject(&quot;created_at&quot;, LocalDateTime.class),</span>
+<span class="fc" id="L70">                resultSet.getObject(&quot;updated_at&quot;, LocalDateTime.class)</span>
+            },
+            &quot;audituser&quot;
+        );
+
+<span class="fc" id="L75">        assertThat(timestamps).isNotNull();</span>
+<span class="fc" id="L76">        assertThat(timestamps[0]).isNotNull();</span>
+<span class="fc" id="L77">        assertThat(timestamps[1]).isNotNull();</span>
+<span class="fc" id="L78">        assertThat(timestamps[1]).isAfterOrEqualTo(timestamps[0]);</span>
+<span class="fc" id="L79">    }</span>
+
+        @Test
+        void shouldHaveAuditActorColumnsInUsersTable() {
+<span class="fc" id="L83">        Integer count = jdbcTemplate.queryForObject(</span>
+            &quot;&quot;&quot;
+            SELECT COUNT(*)
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+              AND table_name = 'users'
+              AND column_name IN ('created_by', 'updated_by')
+            &quot;&quot;&quot;,
+            Integer.class
+        );
+
+<span class="fc" id="L94">        assertThat(count).isEqualTo(2);</span>
+<span class="fc" id="L95">        }</span>
+
+        @Test
+        void shouldPopulateUpdatedByWhenAuthenticatedUserUpdatesProfile() throws Exception {
+<span class="fc" id="L99">        mockMvc.perform(</span>
+<span class="fc" id="L100">                post(&quot;/api/v1/user/create&quot;)</span>
+<span class="fc" id="L101">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L102">                    .content(&quot;&quot;&quot;</span>
+                        {
+                          &quot;name&quot;: &quot;Audit Actor Test&quot;,
+                          &quot;birthDate&quot;: &quot;01/01/1991&quot;,
+                          &quot;phone&quot;: &quot;75999999996&quot;,
+                          &quot;profilePhoto&quot;: null,
+                          &quot;username&quot;: &quot;auditactor&quot;,
+                          &quot;password&quot;: &quot;12345678&quot;
+                        }
+                        &quot;&quot;&quot;)
+            )
+<span class="fc" id="L113">            .andExpect(status().isCreated());</span>
+
+<span class="fc" id="L115">        Map&lt;String, Object&gt; createdUser = jdbcTemplate.queryForMap(</span>
+            &quot;SELECT id, created_by, updated_by FROM users WHERE username = ?&quot;,
+            &quot;auditactor&quot;
+        );
+<span class="fc" id="L119">        long userId = ((Number) createdUser.get(&quot;id&quot;)).longValue();</span>
+
+<span class="fc" id="L121">        String loginResponse = mockMvc.perform(</span>
+<span class="fc" id="L122">                post(&quot;/auth/login&quot;)</span>
+<span class="fc" id="L123">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L124">                    .content(&quot;&quot;&quot;</span>
+                        {
+                          &quot;username&quot;: &quot;auditactor&quot;,
+                          &quot;password&quot;: &quot;12345678&quot;
+                        }
+                        &quot;&quot;&quot;)
+            )
+<span class="fc" id="L131">            .andExpect(status().isOk())</span>
+<span class="fc" id="L132">            .andReturn()</span>
+<span class="fc" id="L133">            .getResponse()</span>
+<span class="fc" id="L134">            .getContentAsString();</span>
+<span class="fc" id="L135">        JsonNode login = objectMapper.readTree(loginResponse);</span>
+
+<span class="fc" id="L137">        mockMvc.perform(</span>
+<span class="fc" id="L138">                patch(&quot;/api/v1/user/me&quot;)</span>
+<span class="fc" id="L139">                    .header(&quot;Authorization&quot;, &quot;Bearer &quot; + login.get(&quot;accessToken&quot;).asText())</span>
+<span class="fc" id="L140">                    .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="fc" id="L141">                    .content(&quot;&quot;&quot;</span>
+                        {
+                          &quot;nome&quot;: &quot;Audit Actor Updated&quot;
+                        }
+                        &quot;&quot;&quot;)
+            )
+<span class="fc" id="L147">            .andExpect(status().isOk());</span>
+
+<span class="fc" id="L149">        Map&lt;String, Object&gt; updatedUser = jdbcTemplate.queryForMap(</span>
+            &quot;SELECT created_by, updated_by FROM users WHERE id = ?&quot;,
+<span class="fc" id="L151">            userId</span>
+        );
+
+<span class="fc" id="L154">        assertThat(updatedUser.get(&quot;created_by&quot;)).isNull();</span>
+<span class="fc" id="L155">        assertThat(((Number) updatedUser.get(&quot;updated_by&quot;)).longValue()).isEqualTo(userId);</span>
+<span class="fc" id="L156">        }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

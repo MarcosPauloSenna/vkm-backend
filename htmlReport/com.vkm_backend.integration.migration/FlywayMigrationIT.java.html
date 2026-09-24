@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FlywayMigrationIT.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.integration.migration</a> &gt; <span class="el_source">FlywayMigrationIT.java</span></div><h1>FlywayMigrationIT.java</h1><pre class="source lang-java linenums">package com.vkm_backend.integration.migration;
+
+import com.vkm_backend.integration.AbstractIntegrationTest;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+<span class="fc" id="L10">class FlywayMigrationIT extends AbstractIntegrationTest {</span>
+
+    @Test
+    void shouldExecuteAllFlywayMigrationsSuccessfully() {
+<span class="fc" id="L14">        Integer failed = jdbcTemplate.queryForObject(</span>
+                &quot;&quot;&quot;
+                SELECT COUNT(*)
+                FROM flyway_schema_history
+                WHERE success = false
+                &quot;&quot;&quot;,
+                Integer.class
+        );
+
+<span class="fc" id="L23">        assertThat(failed).isZero();</span>
+<span class="fc" id="L24">    }</span>
+
+    @Test
+    void shouldHaveFlywayHistory() {
+<span class="fc" id="L28">        Integer count = jdbcTemplate.queryForObject(</span>
+                &quot;&quot;&quot;
+                SELECT COUNT(*)
+                FROM flyway_schema_history
+                &quot;&quot;&quot;,
+                Integer.class
+        );
+
+<span class="fc" id="L36">        assertThat(count).isGreaterThan(0);</span>
+<span class="fc" id="L37">    }</span>
+
+    @Test
+    void shouldCreateUsersTable() {
+<span class="fc" id="L41">        Integer count = jdbcTemplate.queryForObject(</span>
+                &quot;&quot;&quot;
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = 'users'
+                &quot;&quot;&quot;,
+                Integer.class
+        );
+
+<span class="fc" id="L51">        assertThat(count).isEqualTo(1);</span>
+<span class="fc" id="L52">    }</span>
+
+    @Test
+    void shouldCreateRefreshTokensTable() {
+<span class="fc" id="L56">        Integer count = jdbcTemplate.queryForObject(</span>
+                &quot;&quot;&quot;
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = 'refresh_tokens'
+                &quot;&quot;&quot;,
+                Integer.class
+        );
+
+<span class="fc" id="L66">        assertThat(count).isEqualTo(1);</span>
+<span class="fc" id="L67">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

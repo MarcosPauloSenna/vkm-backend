@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.vkm_backend.user.infra.web.controllers</a> &gt; <span class="el_source">AuthenticationController.java</span></div><h1>AuthenticationController.java</h1><pre class="source lang-java linenums">package com.vkm_backend.user.infra.web.controllers;
+
+
+import com.vkm_backend.infra.global.handler.ErrorResponse;
+import com.vkm_backend.user.infra.web.dto.AuthenticationRequest;
+import com.vkm_backend.user.infra.web.dto.AuthenticationResponse;
+import com.vkm_backend.user.infra.web.dto.RefreshTokenRequest;
+import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
+import com.vkm_backend.user.service.AccessTokenService;
+import com.vkm_backend.user.service.LogoutRequest;
+import com.vkm_backend.user.service.RefreshTokenService;
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;auth&quot;)
+@Tag(name = &quot;Autenticação&quot;, description = &quot;Operações de login, renovação e encerramento de sessões&quot;)
+<span class="fc" id="L32">public class AuthenticationController {</span>
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private AccessTokenService accessTokenService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @PostMapping(&quot;/login&quot;)
+        @Operation(
+            summary = &quot;Autenticar usuário&quot;,
+            description = &quot;Valida as credenciais do usuário e retorna um access token JWT e um refresh token.&quot;,
+            tags = {&quot;Autenticação&quot;},
+            security = {}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Usuário autenticado com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = AuthenticationResponse.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Dados de login inválidos&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Usuário ou senha inválidos&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Usuário não encontrado ou inativo&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity login(@Valid @RequestBody AuthenticationRequest data){
+<span class="fc" id="L61">        var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());</span>
+<span class="fc" id="L62">        var auth = this.authenticationManager.authenticate(usernamePassword);</span>
+
+<span class="fc" id="L64">        var accessTokens = accessTokenService.generateAccessTokens((UserDetails)auth.getPrincipal());</span>
+
+<span class="fc" id="L66">        String tokenFamily = UUID.randomUUID().toString();</span>
+<span class="fc" id="L67">        var refreshToken = refreshTokenService.create(data.username(),tokenFamily);</span>
+
+<span class="fc" id="L69">        return ResponseEntity.ok(new AuthenticationResponse(accessTokens, refreshToken));</span>
+
+    }
+
+    @PostMapping(&quot;/refresh&quot;)
+        @Operation(
+            summary = &quot;Renovar tokens de acesso&quot;,
+            description = &quot;Valida o refresh token, revoga o token atual e retorna um novo par de tokens.&quot;,
+            tags = {&quot;Autenticação&quot;},
+            security = {}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Tokens renovados com sucesso&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = AuthenticationResponse.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Refresh token não informado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Refresh token inválido, expirado ou revogado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity refresh(@Valid @RequestBody RefreshTokenRequest request){
+
+<span class="fc" id="L90">        RefreshTokenResult newTokens = refreshTokenService.refresh(request.refreshToken());</span>
+<span class="fc" id="L91">        return ResponseEntity.ok(new AuthenticationResponse(newTokens.accessToken(), newTokens.refreshToken()));</span>
+
+    }
+
+    @PostMapping(&quot;/logout&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+        @Operation(
+            summary = &quot;Encerrar sessão&quot;,
+            description = &quot;Revoga o refresh token informado e encerra a sessão correspondente.&quot;,
+            tags = {&quot;Autenticação&quot;},
+            security = {}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = &quot;204&quot;, description = &quot;Sessão encerrada com sucesso&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Refresh token inválido no corpo da requisição&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Não autorizado&quot;,
+                content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public void logout(@RequestBody LogoutRequest request){
+<span class="fc" id="L111">        refreshTokenService.logout(request.refreshToken());</span>
+
+<span class="fc" id="L113">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
