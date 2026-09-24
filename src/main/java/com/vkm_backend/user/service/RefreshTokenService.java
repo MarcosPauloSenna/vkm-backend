@@ -98,9 +98,10 @@ public class RefreshTokenService {
     public RefreshTokenResult refresh(String refreshToken){
         String tokenHash = hash(refreshToken);
 
-        RefreshTokenEntity currentToken = refreshTokenRepository.findByTokenHash(tokenHash)
-                .orElseThrow(() -> new ValidationException("Refresh token inválido"));
-
+        RefreshTokenEntity currentToken = refreshTokenRepository.findByTokenHash(tokenHash);
+        if(currentToken == null) {
+            throw new ValidationException("Refresh token inválido");
+        }
         Instant now = Instant.now();
 
         if (currentToken.getRevokedAt() != null){
@@ -129,15 +130,21 @@ public class RefreshTokenService {
 
     @Transactional
     public void logout(String rawToken) {
+        if (rawToken == null || rawToken.isBlank()){
+            throw new ValidationException("Refresh token inválido");
+        }
         String tokenHash = hash(rawToken);
 
-        refreshTokenRepository.findByTokenHash(tokenHash)
-                .ifPresent(token -> {
-                    if (token.getRevokedAt() == null) {
-                        token.setRevokedAt(Instant.now());
-                        refreshTokenRepository.save(token);
+        RefreshTokenEntity  token = refreshTokenRepository.findByTokenHash(tokenHash);
+
+        if (token == null){
+            throw new ValidationException("Refresh token inválido");
+              }
+
+        if (token.getRevokedAt() == null) {
+            token.setRevokedAt(Instant.now());
+            refreshTokenRepository.save(token);
                     }
-                });
     }
 
 }

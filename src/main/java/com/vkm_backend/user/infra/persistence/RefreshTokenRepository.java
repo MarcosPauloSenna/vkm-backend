@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, Long> {
 
-    Optional<RefreshTokenEntity> findByTokenHash(String tokenHash);
+
 
     Optional<RefreshTokenEntity> findByTokenHashAndRevokedAtNull( String tokenHash);
 
@@ -32,4 +32,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
        and token.revokedAt is null
 """)
     void revokeAllByUserId(Long userId, Instant revokedAt);
+
+    RefreshTokenEntity findByTokenHash(String tokenHash);
 }

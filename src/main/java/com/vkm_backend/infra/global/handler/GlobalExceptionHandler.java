@@ -53,7 +53,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, "Credencial inválida", "VALIDATION_EXCEPTION");
+        String message;
+        if(ex.getMessage() == null){  message = "Credencial inválida";  }else {message = ex.getMessage();}
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401,message, "VALIDATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 
     }
