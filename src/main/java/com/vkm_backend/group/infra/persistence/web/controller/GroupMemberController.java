@@ -1,6 +1,5 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
-import com.vkm_backend.group.infra.persistence.web.dto.CreateGroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;

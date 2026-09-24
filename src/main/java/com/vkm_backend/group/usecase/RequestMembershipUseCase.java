@@ -3,7 +3,6 @@ package com.vkm_backend.group.usecase;
 import com.vkm_backend.group.domain.GroupMemberRole;
 import com.vkm_backend.group.domain.GroupMemberStatus;
 import com.vkm_backend.group.domain.GroupMembers;
-import com.vkm_backend.group.domain.Groups;
 import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;

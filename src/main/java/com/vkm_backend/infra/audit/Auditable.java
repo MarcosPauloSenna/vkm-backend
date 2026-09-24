@@ -1,7 +1,8 @@
 package com.vkm_backend.infra.audit;
 
-import com.vkm_backend.user.infra.persistence.UserEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;

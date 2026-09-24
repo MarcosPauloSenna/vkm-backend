@@ -1,12 +1,10 @@
 package com.vkm_backend.user.infra.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Schema(description = "Dados opcionais para atualizar o perfil do usuário autenticado")
 public record UpdateUserRequest(
