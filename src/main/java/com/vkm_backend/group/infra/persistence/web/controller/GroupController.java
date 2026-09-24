@@ -1,9 +1,8 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
-import com.vkm_backend.group.infra.persistence.web.dto.CreateGroupRequest;
-import com.vkm_backend.group.infra.persistence.web.dto.CreateGroupResponse;
-import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.CreateGroupUseCase;
+import com.vkm_backend.group.usecase.GroupFindUsecase;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,13 +11,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -27,8 +25,11 @@ public class GroupController {
 
     private final CreateGroupUseCase createGroupUseCase;
 
-    public GroupController(CreateGroupUseCase createGroupUseCase) {
+    private final GroupFindUsecase groupFindUsecase;
+
+    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase) {
         this.createGroupUseCase = createGroupUseCase;
+        this.groupFindUsecase = groupFindUsecase;
     }
 
 
@@ -56,5 +57,27 @@ public class GroupController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateGroupResponse(response, "Grupo criado com successo."));
+    }
+
+
+    @GetMapping("/search")
+    @Operation(
+            summary = "Buscar grupos",
+            description = "Busca grupos filtrando por id, name, description, city e state.",
+            tags = {"Grupos"},
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateGroupResponse.class)))
+    })
+    public ResponseEntity<GroupsSearchResponse> search(@ModelAttribute GroupSearchRequest request, Pageable pageable){
+        Page<GroupResponse> response = groupFindUsecase.search(request, pageable);
+        if (response.isEmpty()){
+            return ResponseEntity.ok().body(new GroupsSearchResponse(response,
+                    null));
+        }
+        return  ResponseEntity.ok().body(new GroupsSearchResponse(response,
+                "Operação realizada com sucesso!"));
     }
 }
