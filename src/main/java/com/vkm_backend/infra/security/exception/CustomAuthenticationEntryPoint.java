@@ -29,14 +29,18 @@ public class CustomAuthenticationEntryPoint
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
+        ErrorResponse error = (ErrorResponse) request.getAttribute("AUTH_ERROR") ;
+
+        if(error == null){
+            error = new ErrorResponse(LocalDateTime.now(ZONE),
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "Usuário não autenticado.",
+                    "AUTHENTICATION_EXCEPTION");
+        }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
-        var error = new ErrorResponse(LocalDateTime.now(ZONE),
-                HttpServletResponse.SC_UNAUTHORIZED,   "Usuário não autenticado.",
-                "AUTHENTICATION_EXCEPTION");
         response.getWriter().write(objectMapper.writeValueAsString(error));
     }
 }

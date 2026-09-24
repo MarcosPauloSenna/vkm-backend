@@ -41,9 +41,9 @@ public class UserUseCase {
         UserEntity entity =  userMapper.toEntity(user);
         // validando Username e Phone
         if (userRepository.existsByUsername(entity.getUsername())){
-            throw new BusinessException("Nome de usuario: " +entity.getUsername()+ ", já esta cadastrado. Digite outro nome de usuario! ", 300);
+            throw new BusinessException("Nome de usuario: " +entity.getUsername()+ ", já esta cadastrado. Digite outro nome de usuario! ");
         }else if (userRepository.existsByPhone(entity.getPhone())) {
-            throw new BusinessException("Telefone: " +entity.getPhone()+ ", já esta cadastrado. Digite outro Telefone! ", 301);
+            throw new BusinessException("Telefone: " +entity.getPhone()+ ", já esta cadastrado. Digite outro Telefone! ");
         };
 
         //Criando hash password
@@ -91,8 +91,7 @@ public class UserUseCase {
                 && user.profilePhoto() == null) {
 
             throw new BusinessException(
-                    "Nenhum dado informado para atualização.", 302
-            );
+                    "Nenhum dado informado para atualização.");
         }
 
         if (user.nome() != null){
@@ -130,7 +129,7 @@ public class UserUseCase {
             entity.setPassword(passwordEncoder.encode(newPassword));
         }else {
             throw new BusinessException(
-                    "Nenhum dado informado para atualização.", 303);
+                    "Nenhum dado informado para atualização.");
         }
 
         UserEntity userPasswordUpdated = userRepository.save(entity);

@@ -26,7 +26,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.security.config.http.MatcherType.path;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
@@ -42,9 +41,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessException (BusinessException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),ex.getLocal(), ex.getMessage(), "BUSINESS_EXCEPTION");
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "BUSINESS_EXCEPTION");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
@@ -52,8 +51,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> validationException (ValidationException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, "Credencial inválida", "VALIDATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 
@@ -63,8 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         List<ErrorResponse> field = new ArrayList<>();
         String path = request.getDescription(false).replaceFirst("^uri=", "");
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", path);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", path);
         ex.getBindingResult().getFieldErrors().forEach(e -> {
             String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
             ErrorResponse error = new ErrorResponse(LocalDateTime.now(ZONE), status.value(), message, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION" );
@@ -75,8 +74,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> dataIntegrityViolationException(
-            DataIntegrityViolationException ex) {
+            DataIntegrityViolationException ex, HttpServletRequest request) {
 
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         log.error("Violação de integridade no banco de dados", ex);
 
         ErrorResponse error = new ErrorResponse(
@@ -92,7 +94,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> conflictException(ConflictException ex){
+    public ResponseEntity<ErrorResponse> conflictException(ConflictException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.CONFLICT.value(), ex.getMessage(),"CONFLICT_EXCEPTION");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
@@ -100,8 +105,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JWTCreationException.class)
     public ResponseEntity<ErrorResponse> jwtCreationException(JWTCreationException ex, HttpServletRequest request){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_CRREATION_EXCEPTION. LOCAL: "
-                +request.getRequestURI());
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_CRREATION_EXCEPTION.");
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
@@ -109,16 +116,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> jwtValidationException(JWTVerificationException ex, HttpServletRequest request){
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION.");
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> credentialsValidationException(BadCredentialsException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.UNAUTHORIZED.value(), "Usuario ou Senha invalida!", "CREDENTIAL_VERIFICATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
@@ -126,8 +133,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<ErrorResponse> authenticationValidationException(InternalAuthenticationServiceException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
@@ -135,8 +142,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EncryptionException.class)
     public ResponseEntity<ErrorResponse> encryptionException(EncryptionException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),500, "usuário não encontrado", "ENCRYPION_EXCEPTION");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
@@ -144,8 +151,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resourceNotFoundException(ResourceNotFoundException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value(), ex.getMessage(),"RESOURCE_NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
@@ -153,10 +160,40 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ForbiddenOperationException.class)
     public ResponseEntity<ErrorResponse> forbiddenOperationException(ForbiddenOperationException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
-        log.error(String.valueOf(ex));
-        log.error("Endpoint: {}", endPoint);
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
         ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.FORBIDDEN.value(), ex.getMessage(),"FORBIDDEN_OPERATION");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    private void logOrigin(Exception ex) {
+        StackTraceElement origin = findProjectOrigin(ex);
+
+        if (origin == null) {
+            log.error("Erro sem origem identificável", ex);
+            return;
+        }
+
+        String source = origin.getClassName().replace('.', '/')
+                + ".java:" + origin.getLineNumber();
+
+        log.error(
+                "Erro disparado em: {}. método={}",
+                source,
+                origin.getMethodName()
+        );
+    }
+
+    private StackTraceElement findProjectOrigin(Exception ex) {
+        for (StackTraceElement element : ex.getStackTrace()) {
+            if (element.getClassName().startsWith("com.vkm_backend")) {
+                return element;
+            }
+        }
+
+        return ex.getStackTrace().length > 0
+                ? ex.getStackTrace()[0]
+                : null;
     }
 
 }

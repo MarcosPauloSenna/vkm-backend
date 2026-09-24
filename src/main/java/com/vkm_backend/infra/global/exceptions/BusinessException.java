@@ -5,18 +5,8 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException{
 
-    private int local;
 
-
-
-    public BusinessException(String usuárioNãoEncontrado) {
-        super("BUSINESS_EXCEPTION");
-    }
-
-    public BusinessException(String message, int local) {
+    public BusinessException(String message) {
         super(message);
-        this.local = local;
     }
-
-
 }
