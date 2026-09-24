@@ -30,6 +30,7 @@ public class GroupMapper {
         groups.setCity(entity.getCity());
         groups.setState(entity.getState());
         groups.setActive(entity.getActive());
+        groups.setOwner(entity.getOwner());
         groups.setCreatedBy(entity.getCreatedBy());
         groups.setUpdatedBy(entity.getUpdatedBy());
         groups.setCreatedAt(entity.getCreatedAt());
@@ -55,7 +56,8 @@ public class GroupMapper {
                 domain.getDescription(),
                 domain.getCity(),
                 domain.getState(),
-                domain.getActive().name());
+                domain.getActive().name(),
+                domain.getOwner().getUsername());
 
     }
 

@@ -6,6 +6,7 @@ CREATE TABLE groups
     city        VARCHAR(255),
     state       VARCHAR(255),
     active      SMALLINT                                 NOT NULL DEFAULT 1,
+    owner_id    BIGINT                                   NOT NULL,
     created_by  BIGINT,
     updated_by  BIGINT,
     created_at  TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,

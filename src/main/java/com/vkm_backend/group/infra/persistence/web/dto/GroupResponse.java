@@ -5,6 +5,7 @@ public record GroupResponse(Long id,
                             String description,
                             String city,
                             String state,
-                            String active) {
+                            String active,
+                            String owner) {
 
 }
