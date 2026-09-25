@@ -1,8 +1,7 @@
 package com.vkm_backend.infra.audit;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import com.vkm_backend.user.infra.persistence.UserEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -19,6 +18,12 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Auditable {
 
+    @CreatedBy
+    private Long createdBy;
+
+    @LastModifiedBy
+    private Long updatedBy;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -27,9 +32,4 @@ public class Auditable {
     @Column(name = "updated_at", nullable = false)
     private  LocalDateTime updatedAt;
 
-    @CreatedBy
-    private Long createdBy;
-
-    @LastModifiedBy
-    private Long updatedBy;
 }
