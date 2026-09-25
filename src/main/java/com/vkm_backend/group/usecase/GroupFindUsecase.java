@@ -1,5 +1,6 @@
 package com.vkm_backend.group.usecase;
 
+import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
 import com.vkm_backend.infra.global.specification.DynamicSpecification;
 import com.vkm_backend.group.domain.Groups;
@@ -9,6 +10,7 @@ import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupSearchRequest;
 import com.vkm_backend.user.infra.persistence.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,8 @@ public class GroupFindUsecase {
         this.userRepository = userRepository;
     }
 
-    public Page<GroupResponse> search(GroupSearchRequest request, Pageable pageable ) {
+    @Transactional
+    public PageResponse<GroupResponse> search(GroupSearchRequest request, Pageable pageable ) {
 
 
 
@@ -45,7 +48,11 @@ public class GroupFindUsecase {
 
 
 
-        return responsePage;
+        return new PageResponse<>(responsePage.getContent(),
+                responsePage.getNumber(),
+                responsePage.getSize(),
+                responsePage.getNumberOfElements(),
+                responsePage.getTotalPages());
 
     }
 }

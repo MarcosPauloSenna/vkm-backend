@@ -3,6 +3,7 @@ package com.vkm_backend.group.infra.persistence.web.controller;
 import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.CreateGroupUseCase;
 import com.vkm_backend.group.usecase.GroupFindUsecase;
+import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,11 +73,8 @@ public class GroupController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateGroupResponse.class)))
     })
     public ResponseEntity<GroupsSearchResponse> search(@ModelAttribute GroupSearchRequest request, Pageable pageable){
-        Page<GroupResponse> response = groupFindUsecase.search(request, pageable);
-        if (response.isEmpty()){
-            return ResponseEntity.ok().body(new GroupsSearchResponse(response,
-                    null));
-        }
+        PageResponse<GroupResponse> response = groupFindUsecase.search(request, pageable);
+
         return  ResponseEntity.ok().body(new GroupsSearchResponse(response,
                 "Operação realizada com sucesso!"));
     }
