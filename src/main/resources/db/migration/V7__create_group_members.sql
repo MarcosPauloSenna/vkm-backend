@@ -4,7 +4,7 @@ CREATE TABLE group_members
     group_id    BIGINT                                  NOT NULL,
     user_id     BIGINT                                  NOT NULL,
     role        VARCHAR(20)                             NOT NULL DEFAULT 'MEMBER'
-                                                       CHECK (role IN ('ADMIN', 'MEMBER')),
+                                                       CHECK (role IN ('OWNER','ADMIN', 'MEMBER')),
     status      VARCHAR(20)                             NOT NULL DEFAULT 'PENDING'
                                                         CHECK (status IN (
                                                                          'APPROVED',
