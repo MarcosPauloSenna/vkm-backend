@@ -35,7 +35,7 @@ public class GroupMembersEntity extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_group_members_user"))
-    private UserEntity useId;
+    private UserEntity userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)

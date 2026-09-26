@@ -14,7 +14,7 @@ public class GroupMemberMapper {
         domain.setGroupId(entity.getGroupId());
         domain.setRole(entity.getRole());
         domain.setStatus(entity.getStatus());
-        domain.setUseId(entity.getUseId());
+        domain.setUseId(entity.getUserId());
 
         return domain;
     }
