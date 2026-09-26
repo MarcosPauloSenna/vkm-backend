@@ -21,8 +21,8 @@ public class GroupMemberMapper {
 
     public MembershipResponse toResponse(GroupMembers domain) {
         return new MembershipResponse(domain.getId(),
-                domain.getUseId().getUsername(),
                 domain.getGroupId().getName(),
+                domain.getUseId().getUsername(),
                 domain.getRole().name(),
                 domain.getStatus().name());
     }
