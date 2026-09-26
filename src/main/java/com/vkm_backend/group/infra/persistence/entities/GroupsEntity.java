@@ -1,5 +1,6 @@
-package com.vkm_backend.group.infra.persistence;
+package com.vkm_backend.group.infra.persistence.entities;
 
+import com.vkm_backend.group.domain.GroupActive;
 import com.vkm_backend.infra.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,9 +20,10 @@ public class GroupsEntity extends Auditable {
     private String description;
     private String city;
     private String state;
-    private int active;
+    @Enumerated(EnumType.ORDINAL)
+    private GroupActive active;
 
-    public GroupsEntity(Long id, int active, String city, String description, String name, String state) {
+    public GroupsEntity(Long id, GroupActive active, String city, String description, String name, String state) {
         this.id = id;
         this.active = active;
         this.city = city;

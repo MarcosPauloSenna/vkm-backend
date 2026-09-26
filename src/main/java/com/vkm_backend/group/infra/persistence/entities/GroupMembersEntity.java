@@ -1,4 +1,4 @@
-package com.vkm_backend.group.infra.persistence;
+package com.vkm_backend.group.infra.persistence.entities;
 
 
 import com.vkm_backend.group.domain.GroupMemberRole;

@@ -1,6 +1,6 @@
 package com.vkm_backend.group.domain;
 
-import com.vkm_backend.group.infra.persistence.GroupsEntity;
+import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
