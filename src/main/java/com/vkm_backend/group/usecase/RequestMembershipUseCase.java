@@ -13,7 +13,9 @@ import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RequestMembershipUseCase {
 
     private final GroupsRepository groupsRepository;
@@ -39,13 +41,13 @@ public class RequestMembershipUseCase {
         Long userId = userRepository.findByUsername(request.username()).getId();
 
 
-        if (groupMembersRepository.existsByGroupIdAndUserId(request.groupId(), userId)) {
+        if (groupMembersRepository.existsByGroupId_IdAndUserId_Id(request.groupId(), userId)) {
             throw new BusinessException("Usuario ja associado a este grupo.");
         }
 
 
         groupMembers.setGroupId(groupsRepository.getReferenceById(request.groupId()));
-        groupMembers.setUseId(userRepository.getReferenceById(userId));
+        groupMembers.setUserId(userRepository.getReferenceById(userId));
         groupMembers.setRole(GroupMemberRole.MEMBER);
         groupMembers.setStatus(GroupMemberStatus.PENDING);
 

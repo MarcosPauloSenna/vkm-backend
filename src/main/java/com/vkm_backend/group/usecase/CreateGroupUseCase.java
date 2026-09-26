@@ -16,9 +16,11 @@ import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.ConflictException;
 import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class CreateGroupUseCase {
 
     private final GroupsRepository groupsRepository;
