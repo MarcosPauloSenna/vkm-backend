@@ -1,16 +1,13 @@
 package com.vkm_backend.user.infra.web.dto;
 
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 
 import java.time.LocalDate;
-
 
 
 @Schema(description = "Dados necessários para criar um novo usuário")

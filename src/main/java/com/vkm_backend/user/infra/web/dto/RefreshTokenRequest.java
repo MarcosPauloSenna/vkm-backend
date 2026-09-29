@@ -1,7 +1,7 @@
 package com.vkm_backend.user.infra.web.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Token utilizado para renovar a sessão autenticada")
 public record RefreshTokenRequest(@NotBlank(message = "refreshToken não informado")

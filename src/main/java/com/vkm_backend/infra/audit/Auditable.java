@@ -19,6 +19,12 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Auditable {
 
+    @CreatedBy
+    private Long createdBy;
+
+    @LastModifiedBy
+    private Long updatedBy;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -27,9 +33,4 @@ public class Auditable {
     @Column(name = "updated_at", nullable = false)
     private  LocalDateTime updatedAt;
 
-    @CreatedBy
-    private Long createdBy;
-
-    @LastModifiedBy
-    private Long updatedBy;
 }

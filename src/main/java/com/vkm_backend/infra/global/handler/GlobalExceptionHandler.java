@@ -38,6 +38,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    @ExceptionHandler(GroupNotFoundException.class)
+    public ResponseEntity<ErrorResponse> groupNotFoundException (GroupNotFoundException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value() ,ex.getMessage(), "BUSINESS_EXCEPTION");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> businessException (BusinessException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();
