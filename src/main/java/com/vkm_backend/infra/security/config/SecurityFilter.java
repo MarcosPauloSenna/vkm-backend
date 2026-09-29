@@ -1,4 +1,4 @@
-package com.vkm_backend.infra.security;
+package com.vkm_backend.infra.security.config;
 
 
 import com.vkm_backend.infra.security.exception.TokenValidationResult;
