@@ -39,7 +39,7 @@ public class Groups {
 
 
     public Groups() {
-        this.active = GroupActive.ATIVO;
+        this.active = GroupActive.ACTIVE;
     }
 }
 

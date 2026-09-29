@@ -1,6 +1,7 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
 import com.vkm_backend.group.infra.persistence.web.dto.*;
+import com.vkm_backend.group.usecase.ActiveInativeGroupUseCase;
 import com.vkm_backend.group.usecase.CreateGroupUseCase;
 import com.vkm_backend.group.usecase.GroupFindUsecase;
 import com.vkm_backend.group.usecase.UpdateGroupUseCase;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +31,13 @@ public class GroupController {
 
     private final UpdateGroupUseCase updateGroupUseCase;
 
-    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase, UpdateGroupUseCase updateGroupUseCase) {
+    private final ActiveInativeGroupUseCase activeInative;
+
+    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase, UpdateGroupUseCase updateGroupUseCase, ActiveInativeGroupUseCase activeInative) {
         this.createGroupUseCase = createGroupUseCase;
         this.groupFindUsecase = groupFindUsecase;
         this.updateGroupUseCase = updateGroupUseCase;
+        this.activeInative = activeInative;
     }
 
 
@@ -92,5 +95,15 @@ public class GroupController {
 
         return ResponseEntity.ok().body(new GroupUpdateResponse(response,
                 "Operação realizada com sucesso!"));
+    }
+
+    @PatchMapping("/{groupId}/status")
+    public ResponseEntity<GroupUpdateResponse> activeInactive(@PathVariable Long groupId,
+                                         @Valid @RequestBody UpdateGroupStatusRequest request,
+                                         Authentication auth){
+        GroupResponse response = activeInative.updadteStatus(request, groupId, auth.getName());
+        return ResponseEntity.ok().body(new GroupUpdateResponse(response,
+                "Operação realizada com sucesso!"));
+
     }
 }
