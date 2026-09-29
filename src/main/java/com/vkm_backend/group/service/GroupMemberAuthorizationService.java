@@ -11,9 +11,11 @@ import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class GroupMemberAuthorizationService {
 
     private final GroupMembersRepository repository;

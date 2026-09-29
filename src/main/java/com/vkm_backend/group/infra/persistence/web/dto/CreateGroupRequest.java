@@ -16,7 +16,7 @@ public record CreateGroupRequest(
         @Size(max = 250, message = "Descrição deve possuir no máximo 250 caracteres")
         @Schema(description = "Descrição do grupo de volei",
                 example = "Grupo de vôlei para quem ama esporte, amizade e diversão dentro e fora das quadras.",
-                maxLength = 100)
+                maxLength = 250)
         String description,
 
         @Size(max = 100, message = "Nome da cidade deve possuir no máximo 100 caracteres")
