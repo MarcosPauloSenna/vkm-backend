@@ -3,6 +3,7 @@ package com.vkm_backend.group.infra.persistence.web.controller;
 import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.CreateGroupUseCase;
 import com.vkm_backend.group.usecase.GroupFindUsecase;
+import com.vkm_backend.group.usecase.UpdateGroupUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,9 +29,12 @@ public class GroupController {
 
     private final GroupFindUsecase groupFindUsecase;
 
-    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase) {
+    private final UpdateGroupUseCase updateGroupUseCase;
+
+    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase, UpdateGroupUseCase updateGroupUseCase) {
         this.createGroupUseCase = createGroupUseCase;
         this.groupFindUsecase = groupFindUsecase;
+        this.updateGroupUseCase = updateGroupUseCase;
     }
 
 
@@ -51,10 +55,10 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Falha na operação. grupo com Id{GropId} não localizado.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<CreateGroupResponse> create(@Valid @RequestBody CreateGroupRequest request, Authentication auth){
+    public ResponseEntity<CreateGroupResponse> create(@Valid @RequestBody CreateGroupRequest request, Authentication auth) {
         String username = auth.getName();
 
-        GroupResponse response  = createGroupUseCase.createGroup(request, username);
+        GroupResponse response = createGroupUseCase.createGroup(request, username);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateGroupResponse(response, "Grupo criado com successo."));
@@ -72,10 +76,21 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateGroupResponse.class)))
     })
-    public ResponseEntity<GroupsSearchResponse> search(@ModelAttribute GroupSearchRequest request, Pageable pageable){
+    public ResponseEntity<GroupsSearchResponse> search(@ModelAttribute GroupSearchRequest request, Pageable pageable) {
         PageResponse<GroupResponse> response = groupFindUsecase.search(request, pageable);
 
-        return  ResponseEntity.ok().body(new GroupsSearchResponse(response,
+        return ResponseEntity.ok().body(new GroupsSearchResponse(response,
+                "Operação realizada com sucesso!"));
+    }
+
+
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<GroupUpdateResponse> updateGroup(@PathVariable Long groupId,
+                                                           @Valid @RequestBody UpdateGroupRequest request,
+                                                           Authentication auth) {
+        GroupResponse response = updateGroupUseCase.updateGroup(request, groupId, auth.getName());
+
+        return ResponseEntity.ok().body(new GroupUpdateResponse(response,
                 "Operação realizada com sucesso!"));
     }
 }
