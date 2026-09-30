@@ -38,12 +38,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    @ExceptionHandler(IllegalFieldArgumentException.class)
+    public ResponseEntity<ErrorResponse> illegalFieldArgumentException (IllegalFieldArgumentException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "ILLEGAL_FIELD_ARGUMENT");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+
+    }
+
     @ExceptionHandler(GroupNotFoundException.class)
     public ResponseEntity<ErrorResponse> groupNotFoundException (GroupNotFoundException ex, HttpServletRequest request){
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value() ,ex.getMessage(), "BUSINESS_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value() ,ex.getMessage(), "GROUP_NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 
     }
@@ -53,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "BUSINESS_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "BUSINESS");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
@@ -65,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Endpoint da requisição: {}", endPoint);
         String message;
         if(ex.getMessage() == null){  message = "Credencial inválida";  }else {message = ex.getMessage();}
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401,message, "VALIDATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401,message, "VALIDATION");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 
     }
@@ -78,7 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Endpoint da requisição: {}", path);
         ex.getBindingResult().getFieldErrors().forEach(e -> {
             String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
-            ErrorResponse error = new ErrorResponse(LocalDateTime.now(ZONE), status.value(), message, "METHOD_ARGUMENT_NOT_VALID_EXCEPTION" );
+            ErrorResponse error = new ErrorResponse(LocalDateTime.now(ZONE), status.value(), message, "METHOD_ARGUMENT_NOT_VALID" );
             field.add(error);
         });
         return ResponseEntity.status(status).body(field);
@@ -110,14 +120,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.CONFLICT.value(), ex.getMessage(),"CONFLICT_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.CONFLICT.value(), ex.getMessage(),"CONFLICT");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
 
     @ExceptionHandler(JWTCreationException.class)
     public ResponseEntity<ErrorResponse> jwtCreationException(JWTCreationException ex, HttpServletRequest request){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_CRREATION_EXCEPTION.");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_CRREATION");
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
@@ -126,7 +136,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> jwtValidationException(JWTVerificationException ex, HttpServletRequest request){
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_VERIFICATION_EXCEPTION.");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),401, ex.getMessage(), "JWT_VERIFICATION");
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
@@ -138,7 +148,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.UNAUTHORIZED.value(), "Usuario ou Senha invalida!", "CREDENTIAL_VERIFICATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.UNAUTHORIZED.value(), "Usuario ou Senha invalida!", "CREDENTIAL_VERIFICATION");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
@@ -147,7 +157,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String endPoint =  request.getRequestURI();
         logOrigin(ex);
         log.error("Endpoint da requisição: {}", endPoint);
-        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não encontrado", "AUTHENTICATION_VERIFICATION_EXCEPTION");
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),403, "usuário não encontrado", "AUTHENTICATION_VERIFICATION");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
