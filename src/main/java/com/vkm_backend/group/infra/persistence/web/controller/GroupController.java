@@ -80,6 +80,8 @@ public class GroupController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateGroupResponse.class)))
     })
     public ResponseEntity<GroupsSearchResponse> search(@ModelAttribute GroupSearchRequest request, Pageable pageable) {
+
+
         PageResponse<GroupResponse> response = groupFindUsecase.search(request, pageable);
 
         return ResponseEntity.ok().body(new GroupsSearchResponse(response,

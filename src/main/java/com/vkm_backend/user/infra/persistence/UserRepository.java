@@ -1,9 +1,12 @@
 package com.vkm_backend.user.infra.persistence;
 
+import com.vkm_backend.infra.global.specification.DynamicRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+public interface UserRepository extends DynamicRepository<UserEntity, Long> {
 
 
     boolean existsByUsername(String username);
@@ -15,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByPhoneAndIdNot(String phone, Long id);
 
     UserEntity getReferenceById(Long id);
+
+    List<UserEntity> findByName(String name);
 }

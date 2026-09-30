@@ -2,6 +2,7 @@ package com.vkm_backend.group.infra.mapper;
 
 import com.vkm_backend.group.domain.GroupMembers;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
+import com.vkm_backend.group.infra.persistence.web.dto.MemberFindResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ public class GroupMemberMapper {
         domain.setRole(entity.getRole());
         domain.setStatus(entity.getStatus());
         domain.setUseId(entity.getUserId());
+        domain.setApprovedAt(entity.getApprovedAt());
 
         return domain;
     }
@@ -25,5 +27,14 @@ public class GroupMemberMapper {
                 domain.getUseId().getUsername(),
                 domain.getRole().name(),
                 domain.getStatus().name());
+    }
+
+    public MemberFindResponse toFindResponse(GroupMembers domain) {
+        return new MemberFindResponse(domain.getId(),
+                domain.getUseId().getName(),
+                domain.getRole().name(),
+                domain.getStatus().name(),
+                domain.getApprovedAt());
+
     }
 }

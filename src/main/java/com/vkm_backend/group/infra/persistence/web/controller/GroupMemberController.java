@@ -1,9 +1,9 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
-import com.vkm_backend.group.infra.persistence.web.dto.MemberResponse;
-import com.vkm_backend.group.infra.persistence.web.dto.MembershipRequest;
-import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.*;
+import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
 import com.vkm_backend.group.usecase.RequestMembershipUseCase;
+import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/group/{groupId}/members")
@@ -25,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupMemberController {
 
     private final RequestMembershipUseCase requestMembershipUseCase;
+    private final GroupMemberFindUseCase groupMemberFindUseCase;
 
-    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase) {
+    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase) {
         this.requestMembershipUseCase = requestMembershipUseCase;
+        this.groupMemberFindUseCase = groupMemberFindUseCase;
     }
 
     @PostMapping("/associate")
@@ -71,6 +71,21 @@ public class GroupMemberController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new MemberResponse(response,
                         "Solicitação de entrada ao grupo '" + response.groupName() + "' enviado com sucesso."));
+
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<GroupMembersSearchResponse> search(@ModelAttribute GroupMemberFindRequest request,
+                                                             @PathVariable Long groupId,
+                                                             Pageable pageable,
+                                                             Authentication auth) {
+
+        PageResponse<MemberFindResponse> response = groupMemberFindUseCase.searchMembers(request,
+                groupId, auth.getName(), pageable);
+
+        return ResponseEntity.ok()
+                .body(new GroupMembersSearchResponse(response, "Operação realizada com sucesso!"));
+
 
     }
 }
