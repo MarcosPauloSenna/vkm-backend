@@ -1,5 +1,6 @@
 package com.vkm_backend.group.usecase;
 
+import com.vkm_backend.group.usecase.GroupSortFields;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
 import com.vkm_backend.infra.global.specification.DynamicSpecification;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class GroupFindUsecase {
@@ -32,7 +34,10 @@ public class GroupFindUsecase {
     @Transactional
     public PageResponse<GroupResponse> search(GroupSearchRequest request, Pageable pageable ) {
 
-
+        pageable = SortWhitelist.validate(
+                pageable,
+                GroupSortFields.SORT_FIELDS
+        );
 
         Page<GroupsEntity> groupsEntityList = groupsRepository.findAll(DynamicSpecification.<GroupsEntity>where(DynamicFilter.toEquals(request.id(), "id"))
                 .and(DynamicFilter.toLike(request.name(), "name"))
@@ -52,7 +57,11 @@ public class GroupFindUsecase {
                 responsePage.getNumber(),
                 responsePage.getSize(),
                 responsePage.getNumberOfElements(),
-                responsePage.getTotalPages());
+                responsePage.getTotalPages(),
+                responsePage.isFirst(),
+                responsePage.isLast(),
+                responsePage.hasNext(),
+                responsePage.hasPrevious());
 
     }
 }

@@ -45,6 +45,11 @@ public class GroupMemberFindUseCase {
 
         authorizationService.authorize(groupId, username);
 
+        pageable = SortWhitelist.validate(
+                pageable,
+                GroupMemberSortFields.SORT_FIELDS
+        );
+
         List<UserEntity> user = userRepository.findByName(request.name());
 
 
@@ -66,7 +71,11 @@ public class GroupMemberFindUseCase {
                 responsePage.getNumber(),
                 responsePage.getSize(),
                 responsePage.getNumberOfElements(),
-                responsePage.getTotalPages());
+                responsePage.getTotalPages(),
+                responsePage.isFirst(),
+                responsePage.isLast(),
+                responsePage.hasNext(),
+                responsePage.hasPrevious());
 
     }
 }
