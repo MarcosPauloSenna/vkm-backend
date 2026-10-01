@@ -5,7 +5,7 @@ import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupMemberFindRequest;
-import com.vkm_backend.group.infra.persistence.web.dto.MemberFindResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.service.GroupMemberAuthorizationService;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
@@ -38,10 +38,10 @@ public class GroupMemberFindUseCase {
     }
 
     @Transactional
-    public PageResponse<MemberFindResponse> searchMembers(GroupMemberFindRequest request,
-                                                          Long groupId,
-                                                          String username,
-                                                          Pageable pageable){
+    public PageResponse<MemberStatusResponse> searchMembers(GroupMemberFindRequest request,
+                                                            Long groupId,
+                                                            String username,
+                                                            Pageable pageable){
 
         authorizationService.authorize(groupId, username);
 
@@ -61,7 +61,7 @@ public class GroupMemberFindUseCase {
 
 
         Page<GroupMembers> pageDomain = groupsMemberEntityList.map(mapper::toDomain);
-        Page<MemberFindResponse> responsePage = pageDomain.map(mapper::toFindResponse);
+        Page<MemberStatusResponse> responsePage = pageDomain.map(mapper::toStatusResponse);
 
 
 

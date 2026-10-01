@@ -2,7 +2,7 @@ package com.vkm_backend.group.infra.mapper;
 
 import com.vkm_backend.group.domain.GroupMembers;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
-import com.vkm_backend.group.infra.persistence.web.dto.MemberFindResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +29,8 @@ public class GroupMemberMapper {
                 domain.getStatus().name());
     }
 
-    public MemberFindResponse toFindResponse(GroupMembers domain) {
-        return new MemberFindResponse(domain.getId(),
+    public MemberStatusResponse toStatusResponse(GroupMembers domain) {
+        return new MemberStatusResponse(domain.getId(),
                 domain.getUseId().getName(),
                 domain.getRole().name(),
                 domain.getStatus().name(),

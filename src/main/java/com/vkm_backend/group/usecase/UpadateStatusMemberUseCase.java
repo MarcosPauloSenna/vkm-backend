@@ -5,7 +5,7 @@ import com.vkm_backend.group.domain.GroupMemberStatus;
 import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
-import com.vkm_backend.group.infra.persistence.web.dto.MemberFindResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusRequest;
 import com.vkm_backend.group.service.GroupMemberAuthorizationService;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
@@ -15,7 +15,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
@@ -33,24 +32,24 @@ public class UpadateStatusMemberUseCase {
     }
 
     @Transactional
-    public MemberFindResponse updateStatusMember(Long groupId, Long memberId, String username, MemberStatusRequest request){
+    public MemberStatusResponse updateStatusMember(Long groupId, Long memberId, String username, MemberStatusRequest request){
 
          GroupMembersEntity membersAuthorized = authorizationService.authorizeAdminAndOwner(groupId, username);
 
 
         Optional<GroupMembersEntity> memberFind = membersRepository.findById(memberId);
 
-        GroupMembersEntity member = valitedUpdateStatus(request.status(), memberFind, membersAuthorized);
+        GroupMembersEntity member = validatedUpdateStatus(request.status(), memberFind, membersAuthorized);
 
         GroupMembersEntity memberStatusUpdated = membersRepository.save(member);
 
-        return mapper.toFindResponse(mapper.toDomain(memberStatusUpdated));
+        return mapper.toStatusResponse(mapper.toDomain(memberStatusUpdated));
 
 
 
     }
 
-    private @NonNull GroupMembersEntity valitedUpdateStatus(GroupMemberStatus status, Optional<GroupMembersEntity> memberFind, GroupMembersEntity membersAuthorized) {
+    private @NonNull GroupMembersEntity validatedUpdateStatus(GroupMemberStatus status, Optional<GroupMembersEntity> memberFind, GroupMembersEntity membersAuthorized) {
 
         if (memberFind.isEmpty()){
             throw new ValidationException("Membro não localizado!");

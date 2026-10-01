@@ -1,10 +1,10 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
-import com.vkm_backend.group.domain.GroupMemberStatus;
 import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
 import com.vkm_backend.group.usecase.RequestMembershipUseCase;
 import com.vkm_backend.group.usecase.UpadateStatusMemberUseCase;
+import com.vkm_backend.group.usecase.UpdateRoleMemberUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,11 +28,13 @@ public class GroupMemberController {
     private final RequestMembershipUseCase requestMembershipUseCase;
     private final GroupMemberFindUseCase groupMemberFindUseCase;
     private final UpadateStatusMemberUseCase updateStatus;
+    private final UpdateRoleMemberUseCase updateRole;
 
-    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase, UpadateStatusMemberUseCase updateStatus) {
+    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase, UpadateStatusMemberUseCase updateStatus, UpdateRoleMemberUseCase updateRole) {
         this.requestMembershipUseCase = requestMembershipUseCase;
         this.groupMemberFindUseCase = groupMemberFindUseCase;
         this.updateStatus = updateStatus;
+        this.updateRole = updateRole;
     }
 
     @PostMapping("/associate")
@@ -85,7 +87,7 @@ public class GroupMemberController {
                                                              Pageable pageable,
                                                              Authentication auth) {
 
-        PageResponse<MemberFindResponse> response = groupMemberFindUseCase.searchMembers(request,
+        PageResponse<MemberStatusResponse> response = groupMemberFindUseCase.searchMembers(request,
                 groupId, auth.getName(), pageable);
 
         return ResponseEntity.ok()
@@ -95,14 +97,26 @@ public class GroupMemberController {
     }
 
     @PatchMapping("/{memberId}/status")
-    public ResponseEntity<MemberStatusResponse> status(@PathVariable Long groupId,
+    public ResponseEntity<MemberUpdateResponse> status(@PathVariable Long groupId,
                                                        @PathVariable Long memberId,
                                                        @Valid @RequestBody MemberStatusRequest request,
                                                        Authentication auth) {
 
-        MemberFindResponse response = updateStatus.updateStatusMember(groupId, memberId, auth.getName(), request);
+        MemberStatusResponse response = updateStatus.updateStatusMember(groupId, memberId, auth.getName(), request);
 
-        return ResponseEntity.ok().body(new MemberStatusResponse(response, "Operação realizada com sucesso!"));
+        return ResponseEntity.ok().body(new MemberUpdateResponse(response, "Operação realizada com sucesso!"));
+
+    }
+
+    @PatchMapping("/{memberId}/role")
+    public ResponseEntity<MemberUpdateResponse> updateRole(@PathVariable Long groupId,
+                                                       @PathVariable Long memberId,
+                                                       @Valid @RequestBody MemberRoleRequest request,
+                                                       Authentication auth) {
+
+        MemberStatusResponse response = updateRole.execute(groupId, memberId, auth.getName(), request);
+
+        return ResponseEntity.ok().body(new MemberUpdateResponse(response, "Operação realizada com sucesso!"));
 
     }
 }
