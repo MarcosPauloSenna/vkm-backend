@@ -7,7 +7,7 @@ import com.vkm_backend.user.infra.web.dto.AuthenticationResponse;
 import com.vkm_backend.user.infra.web.dto.RefreshTokenRequest;
 import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
 import com.vkm_backend.user.service.AccessTokenService;
-import com.vkm_backend.user.service.LogoutRequest;
+import com.vkm_backend.user.infra.web.dto.LogoutRequest;
 import com.vkm_backend.user.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

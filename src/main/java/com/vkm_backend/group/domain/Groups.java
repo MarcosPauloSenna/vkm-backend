@@ -5,6 +5,7 @@ import com.vkm_backend.user.infra.persistence.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,11 +20,11 @@ public class Groups {
     private GroupActive active;
     private UserEntity owner;
     private Long createdBy;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     private Long updatedBy;
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
-    public Groups(GroupActive active, UserEntity owner, String city, LocalDateTime createdAt, Long createdBy, String description, Long id, String name, String state, LocalDateTime updatedAt, Long updatedBy) {
+    public Groups(GroupActive active, UserEntity owner, String city, Instant createdAt, Long createdBy, String description, Long id, String name, String state, Instant updatedAt, Long updatedBy) {
         this.active = active;
         this.owner = owner;
         this.city = city;

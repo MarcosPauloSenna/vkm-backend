@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class UpadateStatusMemberUseCase {
 
         member.setStatus(status);
 
-        member.setApprovedAt(LocalDateTime.now(ZONE));
+        member.setApprovedAt(Instant.now());
         return member;
     }
 }

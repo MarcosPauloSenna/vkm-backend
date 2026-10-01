@@ -66,7 +66,7 @@ public class RefreshTokenService {
         refreshTokenRepository.save(entity);
 
         //grava data e hora do login
-        user.setLastLoginAt(LocalDateTime.now(ZONE));
+        user.setLastLoginAt(Instant.now());
         userRepository.save(user);
 
         return rawToken;

@@ -9,8 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class UserEntity extends Auditable implements UserDetails {
     @Column(name = "role", nullable = false)
     private EnumRoleUser role;
 
-    private  LocalDateTime lastLoginAt;
+    private Instant lastLoginAt;
 
 
     public UserEntity(long id,
@@ -60,7 +60,7 @@ public class UserEntity extends Auditable implements UserDetails {
                       String password,
                       int active,
                       EnumRoleUser role,
-                      LocalDateTime lastLoginAt) {
+                      Instant lastLoginAt) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;

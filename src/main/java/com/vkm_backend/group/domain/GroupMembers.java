@@ -5,6 +5,7 @@ import com.vkm_backend.user.infra.persistence.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,7 +17,7 @@ public class GroupMembers {
     private UserEntity useId;
     private GroupMemberRole role;
     private GroupMemberStatus status;
-    private LocalDateTime approvedAt;
+    private Instant approvedAt;
     private UserEntity approvedBy;
 
     public GroupMembers() {

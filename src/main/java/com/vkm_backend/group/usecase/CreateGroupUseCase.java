@@ -18,6 +18,7 @@ import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class CreateGroupUseCase {
 
         member.setStatus(GroupMemberStatus.APPROVED);
         member.setRole(GroupMemberRole.OWNER);
-        member.setApprovedAt(LocalDateTime.now(ZONE));
+        member.setApprovedAt(Instant.now());
 
 
         groupMembersRepository.save(member);

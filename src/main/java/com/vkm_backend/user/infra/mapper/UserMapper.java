@@ -8,6 +8,7 @@ import com.vkm_backend.user.infra.web.dto.UserResponse;
 import org.springframework.stereotype.Component;
 
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Component
@@ -19,7 +20,6 @@ public class UserMapper {
 
         if (user.getId() != null) {
             entity.setId(user.getId());
-            entity.setUpdatedAt(LocalDateTime.now());
         }
 
         entity.setName(user.getName());
@@ -54,7 +54,7 @@ public class UserMapper {
         user.setRole(entity.getRole());
         user.setActive(entity.getActive());
         user.setCreatedAt(entity.getCreatedAt());
-        user.setLastLoginAt(null);
+        user.setLastLoginAt(entity.getLastLoginAt());
 
 
         return user;

@@ -3,6 +3,7 @@ package com.vkm_backend.user.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -10,18 +11,18 @@ import java.time.LocalDateTime;
 @Getter
 public class User {
 
-    private  Long id;
-    private  String name;
-    private  LocalDate birthDate;
-    private  String phone;
-    private  String profilePhoto;
-    private  String username;
-    private  String password;
-    private  Integer active;
-    private  EnumRoleUser role;
-    private  LocalDateTime lastLoginAt;
-    private  LocalDateTime createdAt;
-    private  LocalDateTime updatedAt;
+    private Long id;
+    private String name;
+    private LocalDate birthDate;
+    private String phone;
+    private String profilePhoto;
+    private String username;
+    private String password;
+    private Integer active;
+    private EnumRoleUser role;
+    private Instant lastLoginAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public User(Long id,
                 String name,
@@ -31,9 +32,9 @@ public class User {
                 String username, String password,
                 Integer active,
                 EnumRoleUser role,
-                LocalDateTime lastLoginAt,
-                LocalDateTime createdAt,
-                LocalDateTime updatedAt) {
+                Instant lastLoginAt,
+                Instant createdAt,
+                Instant updatedAt) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;

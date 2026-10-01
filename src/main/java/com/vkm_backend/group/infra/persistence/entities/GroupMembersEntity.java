@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -46,7 +47,7 @@ public class GroupMembersEntity extends Auditable {
     private GroupMemberStatus status;
 
     @Column(name = "approved_at")
-    private LocalDateTime approvedAt;
+    private Instant approvedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "approved_by",
