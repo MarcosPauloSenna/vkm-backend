@@ -58,14 +58,15 @@ public class UpadateStatusMemberUseCase {
 
         GroupMembersEntity member = memberFind.get();
 
-        if (member.getStatus().equals(status)){
-            throw new BusinessException("Membro "+member.getUserId().getName()+", ja esta com status "+ status +"!");
-        }
-
         if ((member.getRole().equals(GroupMemberRole.ADMIN) || member.getRole().equals(GroupMemberRole.OWNER))
                 && membersAuthorized.getRole().equals(GroupMemberRole.ADMIN)){
             throw new BusinessException("Nivel de permissão insuficiente. Operação não permitida!");
         }
+
+        if (member.getStatus().equals(status)){
+            throw new BusinessException("Membro "+member.getUserId().getName()+", ja esta com status "+ status +"!");
+        }
+
 
 
 
