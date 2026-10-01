@@ -57,7 +57,8 @@ public class GroupMemberFindUseCase {
                 .<GroupMembersEntity>where(DynamicFilter.toEquals(request.id(), "id"))
                 .and(DynamicFilter.toContains(user, "user_id"))
                 .and(DynamicFilter.toContains(request.role(), "role"))
-                .and(DynamicFilter.toContains(request.status(), "status")), pageable);
+                .and(DynamicFilter.toContains(request.status(), "status"))
+                .and(DynamicFilter.toEquals(groupId, "group_id")), pageable);
 
 
         Page<GroupMembers> pageDomain = groupsMemberEntityList.map(mapper::toDomain);
