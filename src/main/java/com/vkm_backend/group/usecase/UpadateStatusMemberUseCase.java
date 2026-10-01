@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UpadateStatusMemberUseCase {
@@ -24,6 +28,19 @@ public class UpadateStatusMemberUseCase {
     private final GroupMemberAuthorizationService authorizationService;
     private final GroupMembersRepository membersRepository;
     private final GroupMemberMapper mapper;
+
+    // Transições que ADMIN e OWNER podem realizar.
+    private static final Map<GroupMemberStatus, Set<GroupMemberStatus>> COMMON_TRANSITIONS = new EnumMap<>(Map.of(
+            GroupMemberStatus.PENDING, EnumSet.of(GroupMemberStatus.APPROVED, GroupMemberStatus.REJECTED),
+            GroupMemberStatus.APPROVED, EnumSet.of(GroupMemberStatus.SUSPENDED)
+    ));
+
+    // Transições extras permitidas somente ao OWNER (segunda via, sem precisar de nova solicitação).
+    // SUSPENDED <-> REJECTED permanece proibido mesmo para o OWNER.
+    private static final Map<GroupMemberStatus, Set<GroupMemberStatus>> OWNER_ONLY_TRANSITIONS = new EnumMap<>(Map.of(
+            GroupMemberStatus.REJECTED, EnumSet.of(GroupMemberStatus.APPROVED, GroupMemberStatus.PENDING),
+            GroupMemberStatus.SUSPENDED, EnumSet.of(GroupMemberStatus.APPROVED, GroupMemberStatus.PENDING)
+    ));
 
     public UpadateStatusMemberUseCase(GroupMemberAuthorizationService authorizationService, GroupMembersRepository membersRepository, GroupMemberMapper mapper) {
         this.authorizationService = authorizationService;
@@ -66,11 +83,7 @@ public class UpadateStatusMemberUseCase {
             throw new BusinessException("Membro "+member.getUserId().getName()+", ja esta com status "+ status +"!");
         }
 
-        if (member.getStatus() == GroupMemberStatus.REJECTED && status == GroupMemberStatus.PENDING) {
-            throw new BusinessException("O membro deve solicitar novamente a entrada pelo endpoint de associação.");
-        }
-
-
+        validateStatusTransition(member.getStatus(), status, membersAuthorized.getRole());
 
         member.setApprovedBy(membersAuthorized.getUserId());
 
@@ -78,5 +91,18 @@ public class UpadateStatusMemberUseCase {
 
         member.setApprovedAt(Instant.now());
         return member;
+    }
+
+    private void validateStatusTransition(GroupMemberStatus from, GroupMemberStatus to, GroupMemberRole actingRole) {
+        boolean allowedForAdminOrOwner = COMMON_TRANSITIONS.getOrDefault(from, Set.of()).contains(to);
+        boolean allowedOnlyForOwner = OWNER_ONLY_TRANSITIONS.getOrDefault(from, Set.of()).contains(to);
+
+        if (!allowedForAdminOrOwner && !allowedOnlyForOwner) {
+            throw new BusinessException("Transição de status não permitida: " + from + " -> " + to + ".");
+        }
+
+        if (allowedOnlyForOwner && !allowedForAdminOrOwner && actingRole != GroupMemberRole.OWNER) {
+            throw new BusinessException("Apenas o proprietário do grupo pode realizar esta alteração de status.");
+        }
     }
 }
