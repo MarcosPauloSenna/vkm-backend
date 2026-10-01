@@ -37,7 +37,7 @@ public class UpadateStatusMemberUseCase {
          GroupMembersEntity membersAuthorized = authorizationService.authorizeAdminAndOwner(groupId, username);
 
 
-        Optional<GroupMembersEntity> memberFind = membersRepository.findById(memberId);
+        Optional<GroupMembersEntity> memberFind = membersRepository.findByIdAndGroupId_Id(memberId, groupId);
 
         GroupMembersEntity member = validatedUpdateStatus(request.status(), memberFind, membersAuthorized);
 
@@ -66,6 +66,9 @@ public class UpadateStatusMemberUseCase {
             throw new BusinessException("Membro "+member.getUserId().getName()+", ja esta com status "+ status +"!");
         }
 
+        if (member.getStatus() == GroupMemberStatus.REJECTED && status == GroupMemberStatus.PENDING) {
+            throw new BusinessException("O membro deve solicitar novamente a entrada pelo endpoint de associação.");
+        }
 
 
 

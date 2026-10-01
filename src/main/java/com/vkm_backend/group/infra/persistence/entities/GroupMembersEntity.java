@@ -49,7 +49,7 @@ public class GroupMembersEntity extends Auditable {
     @Column(name = "approved_at")
     private Instant approvedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by",
             foreignKey = @ForeignKey(name = "fk_group_members_approved_by"))
     private UserEntity approvedBy;

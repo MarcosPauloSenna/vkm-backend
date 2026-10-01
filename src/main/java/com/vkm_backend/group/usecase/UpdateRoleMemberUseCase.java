@@ -36,7 +36,7 @@ public class UpdateRoleMemberUseCase {
 
         GroupMembersEntity membersAuthorized = authorizationService.authorizeOwner(groupId, username);
 
-        Optional<GroupMembersEntity> memberFind = membersRepository.findById(memberId);
+        Optional<GroupMembersEntity> memberFind = membersRepository.findByIdAndGroupId_Id(memberId, groupId);
 
         GroupMembersEntity updatedMember = validatedUpdateStatus(request.role(), memberFind, membersAuthorized);
         GroupMembersEntity memberRoleUpdated = membersRepository.save(updatedMember);
