@@ -34,14 +34,14 @@ public class GroupMemberAuthorizationService {
         this.userRepository = userRepository;
     }
 
-    public GroupMembers authorize(Long groupId, String username) {
+    public GroupMembersEntity authorize(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 
-        return mapper.toDomain(membersEntity);
+        return membersEntity;
     }
 
 
-    public GroupMembers authorizeAdminAndOwner(Long groupId, String username) {
+    public GroupMembersEntity authorizeAdminAndOwner(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 
         if (membersEntity.getRole() != GroupMemberRole.ADMIN &&
@@ -51,10 +51,10 @@ public class GroupMemberAuthorizationService {
             );
         }
 
-        return mapper.toDomain(membersEntity);
+        return membersEntity;
     }
 
-    public GroupMembers authorizeOwner(Long groupId, String username) {
+    public GroupMembersEntity authorizeOwner(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 
         if (membersEntity.getRole() != GroupMemberRole.OWNER) {
@@ -63,7 +63,7 @@ public class GroupMemberAuthorizationService {
             );
         }
 
-        return mapper.toDomain(membersEntity);
+        return membersEntity;
     }
 
     private GroupMembersEntity validUserAndGroup(Long groupId, String username) {

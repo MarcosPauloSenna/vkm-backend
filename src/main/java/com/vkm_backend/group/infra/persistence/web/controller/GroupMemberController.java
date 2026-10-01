@@ -1,8 +1,10 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
+import com.vkm_backend.group.domain.GroupMemberStatus;
 import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
 import com.vkm_backend.group.usecase.RequestMembershipUseCase;
+import com.vkm_backend.group.usecase.UpadateStatusMemberUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +27,12 @@ public class GroupMemberController {
 
     private final RequestMembershipUseCase requestMembershipUseCase;
     private final GroupMemberFindUseCase groupMemberFindUseCase;
+    private final UpadateStatusMemberUseCase updateStatus;
 
-    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase) {
+    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase, UpadateStatusMemberUseCase updateStatus) {
         this.requestMembershipUseCase = requestMembershipUseCase;
         this.groupMemberFindUseCase = groupMemberFindUseCase;
+        this.updateStatus = updateStatus;
     }
 
     @PostMapping("/associate")
@@ -86,6 +91,18 @@ public class GroupMemberController {
         return ResponseEntity.ok()
                 .body(new GroupMembersSearchResponse(response, "Operação realizada com sucesso!"));
 
+
+    }
+
+    @PatchMapping("/{memberId}/status")
+    public ResponseEntity<MemberStatusResponse> status(@PathVariable Long groupId,
+                                                       @PathVariable Long memberId,
+                                                       @Valid @RequestBody MemberStatusRequest request,
+                                                       Authentication auth) {
+
+        MemberFindResponse response = updateStatus.updateStatusMember(groupId, memberId, auth.getName(), request);
+
+        return ResponseEntity.ok().body(new MemberStatusResponse(response, "Operação realizada com sucesso!"));
 
     }
 }
