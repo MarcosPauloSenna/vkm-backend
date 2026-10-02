@@ -71,7 +71,7 @@ public class GroupMemberFindUseCase {
         return new PageResponse<>(responsePage.getContent(),
                 responsePage.getNumber(),
                 responsePage.getSize(),
-                responsePage.getNumberOfElements(),
+                responsePage.getTotalElements(),
                 responsePage.getTotalPages(),
                 responsePage.isFirst(),
                 responsePage.isLast(),

@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -64,12 +63,13 @@ public class ListMyGroupsUseCase {
         List<GroupsEntity> groups = groupMembers.stream().map(GroupMembersEntity::getGroupId).toList();
 
         List<Long> groupIds = groups.stream().map(GroupsEntity::getId).toList();
-        List<Long> groupIdsSearch = new ArrayList<>();
+        List<Long> groupIdsSearch = groupIds;
 
         if (request.id() != null) {
-            groupIdsSearch.add(request.id());
-        }else {
-            groupIdsSearch = groupIds;
+            if (!groupIds.contains(request.id())) {
+                return fromEntityToDomain.execute(Page.empty(pageable), groupMapper);
+            }
+            groupIdsSearch = List.of(request.id());
         }
 
         Page<GroupsEntity> groupsList = groupsRepository.findAll(DynamicSpecification.
