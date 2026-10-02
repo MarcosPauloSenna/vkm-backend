@@ -88,6 +88,22 @@ public class GroupController {
 
 
     @PatchMapping("/{groupId}")
+    @Operation(
+            summary = "Atualiza dados do grupo",
+            description = "Atualiza parcialmente os dados de um grupo (nome, descrição, cidade, estado, etc). " +
+                    "Operação restrita a membros com role ADMIN ou OWNER no grupo.",
+            tags = {"Grupos"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Grupo atualizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupUpdateResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Usuário sem permissão (requer ADMIN/OWNER) ou sem vínculo aprovado com o grupo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Grupo não encontrado.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Nome de grupo já existe nesta cidade.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<GroupUpdateResponse> updateGroup(@PathVariable Long groupId,
                                                            @Valid @RequestBody UpdateGroupRequest request,
                                                            Authentication auth) {
@@ -98,6 +114,19 @@ public class GroupController {
     }
 
     @PatchMapping("/{groupId}/status")
+    @Operation(
+            summary = "Ativa ou desativa o grupo",
+            description = "Altera o status ativo/inativo do grupo. Operação restrita ao OWNER do grupo.",
+            tags = {"Grupos"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status do grupo atualizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupUpdateResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Usuário sem permissão (requer OWNER) ou sem vínculo aprovado com o grupo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Grupo não encontrado.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<GroupUpdateResponse> activeInactive(@PathVariable Long groupId,
                                          @Valid @RequestBody UpdateGroupStatusRequest request,
                                          Authentication auth){

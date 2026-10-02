@@ -85,6 +85,18 @@ public class GroupMemberController {
     }
 
     @GetMapping("/search")
+    @Operation(
+            summary = "Buscar membros do grupo",
+            description = "Busca os membros de um grupo filtrando por id, nome, role e status. " +
+                    "A busca é sempre escopada pelo groupId informado na URL.",
+            tags = {"Membros"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupMembersSearchResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Grupo não encontrado.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<GroupMembersSearchResponse> search(@ModelAttribute GroupMemberFindRequest request,
                                                              @PathVariable Long groupId,
                                                              Pageable pageable,
@@ -100,6 +112,25 @@ public class GroupMemberController {
     }
 
     @PatchMapping("/{memberId}/status")
+    @Operation(
+            summary = "Atualiza o status de um membro",
+            description = "Atualiza o status de participação de um membro no grupo (PENDING, APPROVED, REJECTED, SUSPENDED), " +
+                    "consolidando aprovação, rejeição e suspensão em um único endpoint. Regras de transição: ADMIN e OWNER podem " +
+                    "realizar PENDING->APPROVED/REJECTED e APPROVED->SUSPENDED. Somente o OWNER pode, adicionalmente, realizar " +
+                    "SUSPENDED->APPROVED/PENDING e REJECTED->APPROVED/PENDING (segunda via, sem exigir nova solicitação). " +
+                    "A transição SUSPENDED<->REJECTED é proibida mesmo para o OWNER.",
+            tags = {"Membros"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status do membro atualizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberUpdateResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Transição de status não permitida ou membro já está no status informado.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Usuário sem permissão (requer ADMIN/OWNER) ou nível de permissão insuficiente para o alvo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Membro não localizado no grupo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<MemberUpdateResponse> status(@PathVariable Long groupId,
                                                        @PathVariable Long memberId,
                                                        @Valid @RequestBody MemberStatusRequest request,
@@ -112,6 +143,23 @@ public class GroupMemberController {
     }
 
     @PatchMapping("/{memberId}/role")
+    @Operation(
+            summary = "Atualiza a função (role) de um membro",
+            description = "Promove ou rebaixa um membro (MEMBER/ADMIN/OWNER). Operação restrita ao OWNER do grupo. " +
+                    "O membro alvo precisa estar com status APPROVED. Ao promover outro membro a OWNER, o OWNER atual " +
+                    "é automaticamente rebaixado a MEMBER (transferência de titularidade).",
+            tags = {"Membros"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Função do membro atualizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberUpdateResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Membro não está APPROVED ou já possui a função informada.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Usuário sem permissão (requer OWNER).",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Membro não localizado no grupo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<MemberUpdateResponse> updateRole(@PathVariable Long groupId,
                                                        @PathVariable Long memberId,
                                                        @Valid @RequestBody MemberRoleRequest request,
@@ -126,12 +174,19 @@ public class GroupMemberController {
     @DeleteMapping("/leave")
     @Operation(
             summary = "Sai do grupo",
-            description = "Permite que o usuário autenticado saia do grupo. Membros/ADMINs com vínculo APPROVED " +
-                    "têm o status alterado para LEFT. Solicitações PENDING são tratadas como cancelamento (CANCELLED). " +
-                    "Vínculos SUSPENDED ou REJECTED não podem sair diretamente, e o OWNER deve transferir a " +
-                    "titularidade do grupo antes de sair.",
+            description = "Permite que o usuário autenticado saia do grupo. Vínculos APPROVED (MEMBER/ADMIN) têm o status " +
+                    "alterado para LEFT. Solicitações PENDING são tratadas como cancelamento (CANCELLED). Vínculos SUSPENDED " +
+                    "ou REJECTED não podem sair diretamente, e o OWNER deve transferir a titularidade do grupo antes de sair.",
             tags = {"Membros"}
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário saiu do grupo com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberUpdateResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Membro SUSPENDED/REJECTED, OWNER sem transferência de titularidade, ou já sem vínculo ativo (LEFT/CANCELLED).",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Membro não encontrado no grupo.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<MemberUpdateResponse> leave(@PathVariable Long groupId, Authentication auth) {
 
         MemberStatusResponse response = leaveGroupUseCase.execute(groupId, auth.getName());

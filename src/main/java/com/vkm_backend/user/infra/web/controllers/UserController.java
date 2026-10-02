@@ -145,6 +145,19 @@ public class UserController {
     }
 
     @GetMapping("/mygroups")
+        @Operation(
+            summary = "Listar meus grupos",
+            description = "Retorna apenas os grupos dos quais o usuário autenticado participa (qualquer status de vínculo), " +
+                    "nunca a lista completa de grupos do sistema. Suporta os mesmos filtros de busca de grupos (id, name, " +
+                    "description, city, state) restritos ao escopo do usuário autenticado.",
+            tags = {"Usuários"}
+        )
+        @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Grupos do usuário retornados com sucesso",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupsSearchResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Token de acesso ausente ou inválido",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+        })
     public ResponseEntity<GroupsSearchResponse> searchMyGroups(@ModelAttribute GroupSearchRequest request,
                                                                Pageable pageable, Authentication auth) {
         PageResponse<GroupResponse> response = listMyGroupsUseCase.execute(request, auth.getName(), pageable);
