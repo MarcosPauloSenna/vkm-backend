@@ -10,7 +10,9 @@ CREATE TABLE group_members
                                                                          'APPROVED',
                                                                          'PENDING',
                                                                          'REJECTED',
-                                                                         'SUSPENDED'
+                                                                         'SUSPENDED',
+                                                                         'CANCELLED',
+                                                                         'LEFT'
             )),
     approved_by BIGINT,
     approved_at TIMESTAMP(6) WITHOUT TIME ZONE,

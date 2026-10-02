@@ -4,8 +4,8 @@ CREATE TABLE refresh_tokens
     user_id      BIGINT                                  NOT NULL,
     token_hash   VARCHAR(64)                             NOT NULL,
     token_family VARCHAR(36)                             NOT NULL,
-    expires_at   TIMESTAMP(6) WITHOUT TIME ZONE,
-    created_at   TIMESTAMP(6) WITHOUT TIME ZONE,
+    expires_at   TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
+    created_at   TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     last_used_at TIMESTAMP(6) WITHOUT TIME ZONE,
     revoked_at   TIMESTAMP(6) WITHOUT TIME ZONE,
     CONSTRAINT pk_refresh_tokens PRIMARY KEY (id)

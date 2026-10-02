@@ -9,7 +9,9 @@ CREATE TABLE users
     password      VARCHAR(255)                            NOT NULL,
     active        INTEGER DEFAULT 1                       NOT NULL,
     role          TEXT  DEFAULT 'USER'                    NOT NULL,
-    last_login_at time(6) WITHOUT TIME ZONE,
+    last_login_at TIMESTAMP(6) WITHOUT TIME ZONE,
+    created_by    BIGINT,
+    updated_by    BIGINT,
     created_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     updated_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id)
