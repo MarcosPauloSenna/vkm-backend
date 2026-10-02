@@ -55,10 +55,10 @@ public class GroupMemberFindUseCase {
 
         Page<GroupMembersEntity> groupsMemberEntityList = groupMembersRepository.findAll(DynamicSpecification
                 .<GroupMembersEntity>where(DynamicFilter.toEquals(request.id(), "id"))
-                .and(DynamicFilter.toContains(user, "user_id"))
+                .and(DynamicFilter.toContains(user, "userId"))
                 .and(DynamicFilter.toContains(request.role(), "role"))
                 .and(DynamicFilter.toContains(request.status(), "status"))
-                .and(DynamicFilter.toEquals(groupId, "group_id")), pageable);
+                .and(DynamicFilter.toEquals(groupId, "id", "groupId")), pageable);
 
 
         Page<GroupMembers> pageDomain = groupsMemberEntityList.map(mapper::toDomain);
