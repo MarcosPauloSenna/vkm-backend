@@ -2,18 +2,16 @@ package com.vkm_backend.group.service;
 
 import com.vkm_backend.group.domain.GroupMemberRole;
 import com.vkm_backend.group.domain.GroupMemberStatus;
-import com.vkm_backend.group.domain.GroupMembers;
 import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
-import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
-import com.vkm_backend.user.infra.persistence.UserEntity;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 

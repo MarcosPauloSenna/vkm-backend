@@ -2,7 +2,7 @@ package com.vkm_backend.infra.security.config;
 
 
 import com.vkm_backend.infra.security.exception.TokenValidationResult;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import com.vkm_backend.user.service.AccessTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

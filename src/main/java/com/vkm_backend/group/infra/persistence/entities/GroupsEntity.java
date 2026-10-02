@@ -2,7 +2,7 @@ package com.vkm_backend.group.infra.persistence.entities;
 
 import com.vkm_backend.group.domain.GroupActive;
 import com.vkm_backend.infra.audit.Auditable;
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.vkm_backend.infra.audit;
 
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

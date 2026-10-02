@@ -2,14 +2,10 @@ package com.vkm_backend.user.infra.mapper;
 
 
 import com.vkm_backend.user.domain.User;
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
 import org.springframework.stereotype.Component;
-
-
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Component
 public class UserMapper {

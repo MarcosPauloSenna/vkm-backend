@@ -8,8 +8,8 @@ import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
-import com.vkm_backend.user.infra.persistence.UserEntity;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

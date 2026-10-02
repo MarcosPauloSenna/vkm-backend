@@ -12,16 +12,14 @@ import com.vkm_backend.group.infra.persistence.web.dto.CreateGroupRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
-import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.ConflictException;
 import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
-import com.vkm_backend.user.infra.persistence.UserEntity;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 

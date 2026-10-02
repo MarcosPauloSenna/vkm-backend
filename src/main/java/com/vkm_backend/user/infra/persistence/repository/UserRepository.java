@@ -1,7 +1,7 @@
-package com.vkm_backend.user.infra.persistence;
+package com.vkm_backend.user.infra.persistence.repository;
 
 import com.vkm_backend.infra.global.specification.DynamicRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 
 import java.util.List;
 

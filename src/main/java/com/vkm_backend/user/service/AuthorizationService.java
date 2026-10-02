@@ -1,7 +1,7 @@
 package com.vkm_backend.user.service;
 
-import com.vkm_backend.user.infra.persistence.UserEntity;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

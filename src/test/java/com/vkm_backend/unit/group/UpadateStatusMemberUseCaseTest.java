@@ -12,7 +12,7 @@ import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.service.GroupMemberAuthorizationService;
 import com.vkm_backend.group.usecase.UpadateStatusMemberUseCase;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

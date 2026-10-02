@@ -10,7 +10,7 @@ import com.vkm_backend.group.infra.persistence.web.dto.MembershipRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MembershipResponse;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
-import com.vkm_backend.user.infra.persistence.UserRepository;
+import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

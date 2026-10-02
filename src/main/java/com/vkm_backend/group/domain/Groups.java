@@ -1,12 +1,11 @@
 package com.vkm_backend.group.domain;
 
 
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

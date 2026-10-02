@@ -1,5 +1,6 @@
-package com.vkm_backend.user.infra.persistence;
+package com.vkm_backend.user.infra.persistence.repository;
 
+import com.vkm_backend.user.infra.persistence.entities.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

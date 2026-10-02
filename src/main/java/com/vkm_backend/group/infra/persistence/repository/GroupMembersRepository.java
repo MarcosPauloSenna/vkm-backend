@@ -3,7 +3,7 @@ package com.vkm_backend.group.infra.persistence.repository;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.infra.global.specification.DynamicRepository;
-import com.vkm_backend.user.infra.persistence.UserEntity;
+import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.vkm_backend.user.infra.persistence;
+package com.vkm_backend.user.infra.persistence.entities;
 
 import com.vkm_backend.infra.audit.Auditable;
 import com.vkm_backend.user.domain.EnumRoleUser;

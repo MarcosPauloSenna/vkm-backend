@@ -1,4 +1,4 @@
-package com.vkm_backend.user.infra.persistence;
+package com.vkm_backend.user.infra.persistence.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
