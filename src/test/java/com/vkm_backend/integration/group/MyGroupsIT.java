@@ -85,11 +85,12 @@ class MyGroupsIT extends AbstractGroupIT {
     }
 
     @Test
-    void shouldRejectUserWithoutGroups() throws Exception {
+    void shouldReturnEmptyPageForUserWithoutGroups() throws Exception {
         String token = newUserToken("mgn");
 
         mockMvc.perform(get(URL).header("Authorization", bearer(token)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.groups.totalElements").value(0));
     }
 
     @Test

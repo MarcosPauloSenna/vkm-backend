@@ -57,7 +57,7 @@ public class ListMyGroupsUseCase {
                 <GroupMembersEntity>where(DynamicFilter.toEquals(user, "userId")));
 
         if (groupMembers.isEmpty()) {
-            throw new ValidationException("Usuario não possui grupos cadastrados");
+            return fromEntityToDomain.execute(Page.empty(pageable), groupMapper);
         }
 
         List<GroupsEntity> groups = groupMembers.stream().map(GroupMembersEntity::getGroupId).toList();

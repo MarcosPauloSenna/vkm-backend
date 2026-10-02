@@ -111,14 +111,14 @@ class ListMyGroupsUseCaseTest {
     }
 
     @Test
-    void shouldFailWhenUserHasNoGroups() {
+    void shouldReturnEmptyPageWhenUserHasNoGroups() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(user);
         when(groupMembersRepository.findAll(any(Specification.class))).thenReturn(List.of());
+        when(fromEntityToDomain.execute(any(Page.class), eq(groupMapper))).thenReturn(expected);
 
-        assertThatThrownBy(() -> useCase.execute(emptyRequest(), USERNAME, PageRequest.of(0, 10)))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("não possui grupos");
+        PageResponse<GroupResponse> response = useCase.execute(emptyRequest(), USERNAME, PageRequest.of(0, 10));
 
+        assertThat(response).isSameAs(expected);
         verify(groupsRepository, never()).findAll(any(Specification.class), any(Pageable.class));
     }
 
