@@ -4,7 +4,9 @@ public enum GroupMemberStatus {
     APPROVED("approved"),
     PENDING("pending"),
     REJECTED("rejected"),
-    SUSPENDED("supended");
+    SUSPENDED("supended"),
+    CANCELLED("cancelled"),
+    LEFT("left");
 
     private String status;
 

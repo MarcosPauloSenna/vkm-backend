@@ -2,6 +2,7 @@ package com.vkm_backend.group.infra.persistence.web.controller;
 
 import com.vkm_backend.group.infra.persistence.web.dto.*;
 import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
+import com.vkm_backend.group.usecase.LeaveGroupUseCase;
 import com.vkm_backend.group.usecase.RequestMembershipUseCase;
 import com.vkm_backend.group.usecase.UpadateStatusMemberUseCase;
 import com.vkm_backend.group.usecase.UpdateRoleMemberUseCase;
@@ -29,12 +30,14 @@ public class GroupMemberController {
     private final GroupMemberFindUseCase groupMemberFindUseCase;
     private final UpadateStatusMemberUseCase updateStatus;
     private final UpdateRoleMemberUseCase updateRole;
+    private final LeaveGroupUseCase leaveGroupUseCase;
 
-    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase, UpadateStatusMemberUseCase updateStatus, UpdateRoleMemberUseCase updateRole) {
+    public GroupMemberController(RequestMembershipUseCase requestMembershipUseCase, GroupMemberFindUseCase groupMemberFindUseCase, UpadateStatusMemberUseCase updateStatus, UpdateRoleMemberUseCase updateRole, LeaveGroupUseCase leaveGroupUseCase) {
         this.requestMembershipUseCase = requestMembershipUseCase;
         this.groupMemberFindUseCase = groupMemberFindUseCase;
         this.updateStatus = updateStatus;
         this.updateRole = updateRole;
+        this.leaveGroupUseCase = leaveGroupUseCase;
     }
 
     @PostMapping("/associate")
@@ -117,6 +120,23 @@ public class GroupMemberController {
         MemberStatusResponse response = updateRole.execute(groupId, memberId, auth.getName(), request);
 
         return ResponseEntity.ok().body(new MemberUpdateResponse(response, "Operação realizada com sucesso!"));
+
+    }
+
+    @DeleteMapping("/leave")
+    @Operation(
+            summary = "Sai do grupo",
+            description = "Permite que o usuário autenticado saia do grupo. Membros/ADMINs com vínculo APPROVED " +
+                    "têm o status alterado para LEFT. Solicitações PENDING são tratadas como cancelamento (CANCELLED). " +
+                    "Vínculos SUSPENDED ou REJECTED não podem sair diretamente, e o OWNER deve transferir a " +
+                    "titularidade do grupo antes de sair.",
+            tags = {"Membros"}
+    )
+    public ResponseEntity<MemberUpdateResponse> leave(@PathVariable Long groupId, Authentication auth) {
+
+        MemberStatusResponse response = leaveGroupUseCase.execute(groupId, auth.getName());
+
+        return ResponseEntity.ok().body(new MemberUpdateResponse(response, "Você saiu do grupo com sucesso."));
 
     }
 }

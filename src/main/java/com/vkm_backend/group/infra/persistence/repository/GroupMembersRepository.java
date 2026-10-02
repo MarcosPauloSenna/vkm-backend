@@ -16,5 +16,4 @@ public interface GroupMembersRepository extends DynamicRepository<GroupMembersEn
     GroupMembersEntity findByGroupIdAndUserId(GroupsEntity groupsEntity, UserEntity user);
 
     Optional<GroupMembersEntity> findByIdAndGroupId_Id(Long memberId, Long groupId);
-
 }

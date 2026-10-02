@@ -65,7 +65,18 @@ public class RequestMembershipUseCase {
     }
 
     private MembershipResponse reapply(GroupMembersEntity membership) {
-        if (membership.getStatus() != GroupMemberStatus.REJECTED) {
+        GroupMemberStatus currentStatus = membership.getStatus();
+
+        if (currentStatus == GroupMemberStatus.CANCELLED || currentStatus == GroupMemberStatus.LEFT) {
+            // Solicitação cancelada pelo próprio usuário ou saída voluntária: pode solicitar novamente de imediato.
+            membership.setStatus(GroupMemberStatus.PENDING);
+            membership.setRole(GroupMemberRole.MEMBER);
+            membership.setApprovedAt(null);
+            membership.setApprovedBy(null);
+            return toResponse(groupMembersRepository.save(membership));
+        }
+
+        if (currentStatus != GroupMemberStatus.REJECTED) {
             throw new BusinessException("Usuario ja associado a este grupo.");
         }
 
@@ -74,11 +85,7 @@ public class RequestMembershipUseCase {
             throw new BusinessException("Não foi possível verificar quando a solicitação foi rejeitada.");
         }
 
-        Instant eligibleAt = rejectedAt.plus(REAPPLICATION_WAIT);
-        if (Instant.now().isBefore(eligibleAt)) {
-            throw new BusinessException("Uma nova solicitação só pode ser feita após 24 horas da rejeição.");
-        }
-
+        validateElegibility(rejectedAt.plus(REAPPLICATION_WAIT));
         membership.setStatus(GroupMemberStatus.PENDING);
         membership.setRole(GroupMemberRole.MEMBER);
         membership.setApprovedAt(null);
@@ -89,6 +96,12 @@ public class RequestMembershipUseCase {
 
     private MembershipResponse toResponse(GroupMembersEntity membership) {
         return groupMemberMapper.toResponse(groupMemberMapper.toDomain(membership));
+    }
+
+    private void validateElegibility(Instant eligibleAt) {
+        if (Instant.now().isBefore(eligibleAt)) {
+            throw new BusinessException("Uma nova solicitação só pode ser feita após 24 horas da rejeição.");
+        }
     }
 
 
