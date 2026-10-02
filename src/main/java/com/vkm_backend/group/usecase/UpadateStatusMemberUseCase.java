@@ -9,7 +9,7 @@ import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusRequest;
 import com.vkm_backend.group.service.GroupMemberAuthorizationService;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
-import com.vkm_backend.infra.global.exceptions.ValidationException;
+import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -69,7 +69,7 @@ public class UpadateStatusMemberUseCase {
     private @NonNull GroupMembersEntity validatedUpdateStatus(GroupMemberStatus status, Optional<GroupMembersEntity> memberFind, GroupMembersEntity membersAuthorized) {
 
         if (memberFind.isEmpty()){
-            throw new ValidationException("Membro não localizado!");
+            throw new MemberNotFoundException("Membro não localizado!");
         }
 
         GroupMembersEntity member = memberFind.get();

@@ -179,6 +179,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> memberNotFoundException(MemberNotFoundException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.NOT_FOUND.value(), ex.getMessage(),"MEMBER_NOT_FOUND");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(ForbiddenOperationException.class)
     public ResponseEntity<ErrorResponse> forbiddenOperationException(ForbiddenOperationException ex,  HttpServletRequest request){
         String endPoint =  request.getRequestURI();

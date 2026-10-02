@@ -10,6 +10,7 @@ import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
+import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
 import com.vkm_backend.user.infra.persistence.UserEntity;
 import com.vkm_backend.user.infra.persistence.UserRepository;
@@ -76,7 +77,7 @@ public class GroupMemberAuthorizationService {
         GroupMembersEntity membersEntity = repository.findByGroupIdAndUserId(group.get(), user);
 
         if (membersEntity == null) {
-            throw new ValidationException(
+            throw new MemberNotFoundException(
                     "Usuário não é membro deste grupo."
             );
 
