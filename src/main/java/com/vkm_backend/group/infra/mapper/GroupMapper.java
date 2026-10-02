@@ -17,6 +17,7 @@ public class GroupMapper {
         entity.setCity(domain.getCity());
         entity.setState(domain.getState());
         entity.setActive(domain.getActive());
+        entity.setOwner(domain.getOwner());
         return entity;
 
     }
