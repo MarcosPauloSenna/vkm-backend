@@ -36,7 +36,7 @@ class GlobalExceptionHandlerTest {
                 request
         );
 
-        assertError(response, 400, "BUSINESS_EXCEPTION");
+        assertError(response, 400, "BUSINESS");
     }
 
     @Test
@@ -46,7 +46,7 @@ class GlobalExceptionHandlerTest {
                 request
         );
 
-        assertError(response, 401, "VALIDATION_EXCEPTION");
+        assertError(response, 401, "VALIDATION");
     }
 
     @Test
@@ -76,7 +76,7 @@ class GlobalExceptionHandlerTest {
                 request
         );
 
-        assertError(response, 409, "CONFLICT_EXCEPTION");
+        assertError(response, 409, "CONFLICT");
     }
 
     @Test
