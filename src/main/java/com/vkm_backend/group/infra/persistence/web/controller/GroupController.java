@@ -1,10 +1,7 @@
 package com.vkm_backend.group.infra.persistence.web.controller;
 
 import com.vkm_backend.group.infra.persistence.web.dto.*;
-import com.vkm_backend.group.usecase.ActiveInativeGroupUseCase;
-import com.vkm_backend.group.usecase.CreateGroupUseCase;
-import com.vkm_backend.group.usecase.GroupFindUsecase;
-import com.vkm_backend.group.usecase.UpdateGroupUseCase;
+import com.vkm_backend.group.usecase.*;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,17 +24,18 @@ public class GroupController {
 
     private final CreateGroupUseCase createGroupUseCase;
 
-    private final GroupFindUsecase groupFindUsecase;
+    private final GroupFindUseCase groupFindUsecase;
 
     private final UpdateGroupUseCase updateGroupUseCase;
 
-    private final ActiveInativeGroupUseCase activeInative;
+    private final ActiveInativeGroupUseCase activeInactive;
 
-    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUsecase groupFindUsecase, UpdateGroupUseCase updateGroupUseCase, ActiveInativeGroupUseCase activeInative) {
+
+    public GroupController(CreateGroupUseCase createGroupUseCase, GroupFindUseCase groupFindUsecase, UpdateGroupUseCase updateGroupUseCase, ActiveInativeGroupUseCase activeInactive) {
         this.createGroupUseCase = createGroupUseCase;
         this.groupFindUsecase = groupFindUsecase;
         this.updateGroupUseCase = updateGroupUseCase;
-        this.activeInative = activeInative;
+        this.activeInactive = activeInactive;
     }
 
 
@@ -103,9 +101,10 @@ public class GroupController {
     public ResponseEntity<GroupUpdateResponse> activeInactive(@PathVariable Long groupId,
                                          @Valid @RequestBody UpdateGroupStatusRequest request,
                                          Authentication auth){
-        GroupResponse response = activeInative.updadteStatus(request, groupId, auth.getName());
+        GroupResponse response = activeInactive.updadteStatus(request, groupId, auth.getName());
         return ResponseEntity.ok().body(new GroupUpdateResponse(response,
                 "Operação realizada com sucesso!"));
 
     }
+
 }

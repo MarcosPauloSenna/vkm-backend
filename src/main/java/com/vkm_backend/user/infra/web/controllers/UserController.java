@@ -1,5 +1,10 @@
 package com.vkm_backend.user.infra.web.controllers;
 
+import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
+import com.vkm_backend.group.infra.persistence.web.dto.GroupSearchRequest;
+import com.vkm_backend.group.infra.persistence.web.dto.GroupsSearchResponse;
+import com.vkm_backend.group.usecase.ListMyGroupsUseCase;
+import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import com.vkm_backend.user.infra.web.dto.*;
 import com.vkm_backend.user.usecase.UserUseCase;
@@ -11,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,10 +30,12 @@ import java.util.List;
 public class UserController {
 
     private  final UserUseCase userUseCase;
+    private final ListMyGroupsUseCase listMyGroupsUseCase;
 
-    public UserController(UserUseCase userUseCase) {
+    public UserController(UserUseCase userUseCase, ListMyGroupsUseCase listMyGroupsUseCase) {
 
         this.userUseCase = userUseCase;
+        this.listMyGroupsUseCase = listMyGroupsUseCase;
     }
 
     @PostMapping("/create")
@@ -136,7 +144,14 @@ public class UserController {
         return ResponseEntity.ok(userUseCase.updatePassword(request.newPassword(), authentication.getName()));
     }
 
+    @GetMapping("/mygroups")
+    public ResponseEntity<GroupsSearchResponse> searchMyGroups(@ModelAttribute GroupSearchRequest request,
+                                                               Pageable pageable, Authentication auth) {
+        PageResponse<GroupResponse> response = listMyGroupsUseCase.execute(request, auth.getName(), pageable);
 
+        return ResponseEntity.ok().body(new GroupsSearchResponse(response,
+                "Operação realizada com sucesso!"));
+    }
 
 
 }
