@@ -7,7 +7,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusRequest;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ import java.util.Set;
 @Service
 public class UpadateStatusMemberUseCase {
     private  final ZoneId ZONE = ZoneId.of("America/Sao_Paulo");
-    private final GroupMemberAuthorizationService authorizationService;
+    private final GroupAccessPolicy authorizationService;
     private final GroupMembersRepository membersRepository;
     private final GroupMemberMapper mapper;
 
@@ -42,7 +42,7 @@ public class UpadateStatusMemberUseCase {
             GroupMemberStatus.SUSPENDED, EnumSet.of(GroupMemberStatus.APPROVED, GroupMemberStatus.PENDING)
     ));
 
-    public UpadateStatusMemberUseCase(GroupMemberAuthorizationService authorizationService, GroupMembersRepository membersRepository, GroupMemberMapper mapper) {
+    public UpadateStatusMemberUseCase(GroupAccessPolicy authorizationService, GroupMembersRepository membersRepository, GroupMemberMapper mapper) {
         this.authorizationService = authorizationService;
         this.membersRepository = membersRepository;
         this.mapper = mapper;

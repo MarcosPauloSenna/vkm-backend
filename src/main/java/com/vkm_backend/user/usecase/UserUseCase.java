@@ -37,7 +37,7 @@ public class UserUseCase {
     @Transactional
     public UserResponse createUser( CreateUserRequest request){
 
-        User user = userMapper.fromUser(request);
+        User user = userMapper.toDomain(request);
         UserEntity entity =  userMapper.toEntity(user);
         // validando Username e Phone
         if (userRepository.existsByUsername(entity.getUsername())){

@@ -2,7 +2,6 @@ package com.vkm_backend.group.service;
 
 import com.vkm_backend.group.domain.GroupMemberRole;
 import com.vkm_backend.group.domain.GroupMemberStatus;
-import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
@@ -18,21 +17,20 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class GroupMemberAuthorizationService {
+public class GroupMemberAccessPolicy implements GroupAccessPolicy {
 
     private final GroupMembersRepository repository;
-    private final GroupMemberMapper mapper;
     private final GroupsRepository groupsRepository;
 
     private final UserRepository userRepository;
 
-    public GroupMemberAuthorizationService(GroupMembersRepository repository, GroupMemberMapper mapper, GroupsRepository groupsRepository, UserRepository userRepository) {
+    public GroupMemberAccessPolicy(GroupMembersRepository repository, GroupsRepository groupsRepository, UserRepository userRepository) {
         this.repository = repository;
-        this.mapper = mapper;
         this.groupsRepository = groupsRepository;
         this.userRepository = userRepository;
     }
 
+    @Override
     public GroupMembersEntity authorize(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 
@@ -40,6 +38,7 @@ public class GroupMemberAuthorizationService {
     }
 
 
+    @Override
     public GroupMembersEntity authorizeAdminAndOwner(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 
@@ -53,6 +52,7 @@ public class GroupMemberAuthorizationService {
         return membersEntity;
     }
 
+    @Override
     public GroupMembersEntity authorizeOwner(Long groupId, String username) {
         GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
 

@@ -7,7 +7,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberRoleRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import jakarta.transaction.Transactional;
@@ -18,13 +18,13 @@ import java.util.Optional;
 @Service
 public class UpdateRoleMemberUseCase {
 
-    private final GroupMemberAuthorizationService authorizationService;
+    private final GroupAccessPolicy authorizationService;
 
     private final GroupMemberMapper mapper;
 
     private final GroupMembersRepository membersRepository;
 
-    public UpdateRoleMemberUseCase(GroupMemberAuthorizationService authorizationService, GroupMemberMapper mapper, GroupMembersRepository membersRepository) {
+    public UpdateRoleMemberUseCase(GroupAccessPolicy authorizationService, GroupMemberMapper mapper, GroupMembersRepository membersRepository) {
         this.authorizationService = authorizationService;
         this.mapper = mapper;
         this.membersRepository = membersRepository;

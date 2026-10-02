@@ -70,7 +70,7 @@ public class UserMapper implements EntityMapper<UserEntity, User, UserResponse> 
                 user.getProfilePhoto());
     }
 
-    public User fromUser(CreateUserRequest request) {
+    public User toDomain(CreateUserRequest request) {
         User user = new User();
 
         user.setName(request.name());

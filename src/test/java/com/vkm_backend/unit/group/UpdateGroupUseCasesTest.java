@@ -8,7 +8,7 @@ import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.UpdateGroupRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.UpdateGroupStatusRequest;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.group.usecase.ActiveInativeGroupUseCase;
 import com.vkm_backend.group.usecase.UpdateGroupUseCase;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
@@ -43,7 +43,7 @@ class UpdateGroupUseCasesTest {
     @Mock
     private GroupMapper groupMapper;
     @Mock
-    private GroupMemberAuthorizationService authorizationService;
+    private GroupAccessPolicy authorizationService;
     @InjectMocks
     private UpdateGroupUseCase updateUseCase;
     @InjectMocks

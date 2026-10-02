@@ -9,7 +9,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupMemberFindRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.exceptions.IllegalFieldArgumentException;
@@ -55,7 +55,7 @@ class GroupMemberFindUseCaseTest {
     @Mock
     private GroupMemberMapper mapper;
     @Mock
-    private GroupMemberAuthorizationService authorizationService;
+    private GroupAccessPolicy authorizationService;
     @Mock
     private UserRepository userRepository;
     @Spy

@@ -9,7 +9,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.group.usecase.UpadateStatusMemberUseCase;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.user.infra.persistence.entities.UserEntity;
@@ -38,7 +38,7 @@ class UpadateStatusMemberUseCaseTest {
     private static final String ACTING_USERNAME = "manager";
 
     @Mock
-    private GroupMemberAuthorizationService authorizationService;
+    private GroupAccessPolicy authorizationService;
     @Mock
     private GroupMembersRepository membersRepository;
     @Mock

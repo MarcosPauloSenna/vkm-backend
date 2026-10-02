@@ -2,12 +2,11 @@ package com.vkm_backend.unit.group;
 
 import com.vkm_backend.group.domain.GroupMemberRole;
 import com.vkm_backend.group.domain.GroupMemberStatus;
-import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupMemberAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
@@ -29,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GroupMemberAuthorizationServiceTest {
+class GroupMemberAccessPolicyTest {
 
     private static final Long GROUP_ID = 1L;
     private static final String USERNAME = "player";
@@ -37,19 +36,17 @@ class GroupMemberAuthorizationServiceTest {
     @Mock
     private GroupMembersRepository membersRepository;
     @Mock
-    private GroupMemberMapper mapper;
-    @Mock
     private GroupsRepository groupsRepository;
     @Mock
     private UserRepository userRepository;
 
-    private GroupMemberAuthorizationService service;
+    private GroupMemberAccessPolicy service;
     private GroupsEntity group;
     private UserEntity user;
 
     @BeforeEach
     void setUp() {
-        service = new GroupMemberAuthorizationService(membersRepository, mapper, groupsRepository, userRepository);
+        service = new GroupMemberAccessPolicy(membersRepository, groupsRepository, userRepository);
         group = new GroupsEntity();
         group.setId(GROUP_ID);
         user = new UserEntity();

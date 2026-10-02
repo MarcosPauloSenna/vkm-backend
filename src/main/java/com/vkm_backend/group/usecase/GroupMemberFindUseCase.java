@@ -5,7 +5,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupMemberFindRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
@@ -24,13 +24,13 @@ public class GroupMemberFindUseCase {
 
     private final GroupMembersRepository groupMembersRepository;
     private final GroupMemberMapper mapper;
-    private final GroupMemberAuthorizationService authorizationService;
+    private final GroupAccessPolicy authorizationService;
     private final UserRepository userRepository;
     private final PageResponseMapper pageResponseMapper;
 
     public GroupMemberFindUseCase(GroupMembersRepository groupMembersRepository,
                                   GroupMemberMapper mapper,
-                                  GroupMemberAuthorizationService authorizationService,
+                                  GroupAccessPolicy authorizationService,
                                   UserRepository userRepository,
                                   PageResponseMapper pageResponseMapper) {
         this.groupMembersRepository = groupMembersRepository;

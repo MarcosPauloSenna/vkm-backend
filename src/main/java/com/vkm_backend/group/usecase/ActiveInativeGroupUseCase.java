@@ -6,7 +6,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.UpdateGroupStatusRequest;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,9 @@ public class ActiveInativeGroupUseCase {
 
     private final GroupsRepository groupsRepository;
     private final GroupMapper groupMapper;
-    private final GroupMemberAuthorizationService authorizationService;
+    private final GroupAccessPolicy authorizationService;
 
-    public ActiveInativeGroupUseCase(GroupMemberAuthorizationService authorizationService, GroupsRepository groupsRepository, GroupMapper groupMapper) {
+    public ActiveInativeGroupUseCase(GroupAccessPolicy authorizationService, GroupsRepository groupsRepository, GroupMapper groupMapper) {
         this.authorizationService = authorizationService;
         this.groupsRepository = groupsRepository;
         this.groupMapper = groupMapper;

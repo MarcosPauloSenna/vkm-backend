@@ -9,7 +9,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberRoleRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.group.usecase.UpdateRoleMemberUseCase;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
@@ -43,7 +43,7 @@ class UpdateRoleMemberUseCaseTest {
     private static final String OWNER_USERNAME = "owner";
 
     @Mock
-    private GroupMemberAuthorizationService authorizationService;
+    private GroupAccessPolicy authorizationService;
     @Mock
     private GroupMemberMapper mapper;
     @Mock

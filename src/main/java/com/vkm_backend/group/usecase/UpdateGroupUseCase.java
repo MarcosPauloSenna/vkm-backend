@@ -6,7 +6,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.UpdateGroupRequest;
-import com.vkm_backend.group.service.GroupMemberAuthorizationService;
+import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,10 +20,10 @@ public class UpdateGroupUseCase {
 
     private final GroupsRepository groupsRepository;
     private final GroupMapper groupMapper;
-    private final GroupMemberAuthorizationService authorizationService;
+    private final GroupAccessPolicy authorizationService;
 
 
-    public UpdateGroupUseCase(GroupsRepository groupsRepository, GroupMapper groupMapper, GroupMemberAuthorizationService authorizationService) {
+    public UpdateGroupUseCase(GroupsRepository groupsRepository, GroupMapper groupMapper, GroupAccessPolicy authorizationService) {
         this.groupsRepository = groupsRepository;
         this.groupMapper = groupMapper;
         this.authorizationService = authorizationService;
