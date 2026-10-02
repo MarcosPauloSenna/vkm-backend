@@ -14,6 +14,7 @@ import com.vkm_backend.group.usecase.GroupMemberFindUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.exceptions.IllegalFieldArgumentException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
+import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -56,6 +58,8 @@ class GroupMemberFindUseCaseTest {
     private GroupMemberAuthorizationService authorizationService;
     @Mock
     private UserRepository userRepository;
+    @Spy
+    private PageResponseMapper pageResponseMapper = new PageResponseMapper();
     @InjectMocks
     private GroupMemberFindUseCase useCase;
 

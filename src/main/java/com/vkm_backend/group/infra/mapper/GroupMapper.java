@@ -4,11 +4,13 @@ import com.vkm_backend.group.domain.Groups;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.web.dto.CreateGroupRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
+import com.vkm_backend.infra.global.mapper.EntityMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GroupMapper {
+public class GroupMapper implements EntityMapper<GroupsEntity, Groups, GroupResponse> {
 
+    @Override
     public GroupsEntity toEntity(Groups domain) {
         GroupsEntity entity = new GroupsEntity();
 
@@ -22,6 +24,7 @@ public class GroupMapper {
 
     }
 
+    @Override
     public Groups toDomain(GroupsEntity entity) {
         Groups groups = new Groups();
 
@@ -50,6 +53,7 @@ public class GroupMapper {
 
     }
 
+    @Override
     public GroupResponse toResponse(Groups domain) {
 
         return new GroupResponse(domain.getId(),

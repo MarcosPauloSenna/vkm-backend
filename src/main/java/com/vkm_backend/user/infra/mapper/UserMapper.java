@@ -5,12 +5,14 @@ import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
+import com.vkm_backend.infra.global.mapper.EntityMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
+public class UserMapper implements EntityMapper<UserEntity, User, UserResponse> {
 
 
+    @Override
     public UserEntity toEntity(User user) {
         UserEntity entity = new UserEntity();
 
@@ -33,6 +35,7 @@ public class UserMapper {
         return entity;
     }
 
+    @Override
     public User toDomain(UserEntity entity) {
         User user = new User();
 
@@ -56,6 +59,7 @@ public class UserMapper {
         return user;
     }
 
+    @Override
     public UserResponse toResponse(User user) {
 
         return new UserResponse(user.getId(),

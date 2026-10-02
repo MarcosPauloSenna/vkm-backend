@@ -7,7 +7,7 @@ import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupSearchRequest;
-import com.vkm_backend.group.service.GetGroupsFromEntityToDomain;
+import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
@@ -29,14 +29,14 @@ public class ListMyGroupsUseCase {
     private final GroupsRepository groupsRepository;
     private final GroupMembersRepository groupMembersRepository;
     private final GroupMapper groupMapper;
-    private final GetGroupsFromEntityToDomain fromEntityToDomain;
+    private final PageResponseMapper pageResponseMapper;
 
-    public ListMyGroupsUseCase(UserRepository userRepository, GroupsRepository groupsRepository, GroupMembersRepository groupMembersRepository, GroupMapper groupMapper, GetGroupsFromEntityToDomain fromEntityToDomain) {
+    public ListMyGroupsUseCase(UserRepository userRepository, GroupsRepository groupsRepository, GroupMembersRepository groupMembersRepository, GroupMapper groupMapper, PageResponseMapper pageResponseMapper) {
         this.userRepository = userRepository;
         this.groupsRepository = groupsRepository;
         this.groupMembersRepository = groupMembersRepository;
         this.groupMapper = groupMapper;
-        this.fromEntityToDomain = fromEntityToDomain;
+        this.pageResponseMapper = pageResponseMapper;
     }
 
 
@@ -57,7 +57,7 @@ public class ListMyGroupsUseCase {
                 <GroupMembersEntity>where(DynamicFilter.toEquals(user, "userId")));
 
         if (groupMembers.isEmpty()) {
-            return fromEntityToDomain.execute(Page.empty(pageable), groupMapper);
+            return pageResponseMapper.toPageResponse(Page.empty(pageable), groupMapper);
         }
 
         List<GroupsEntity> groups = groupMembers.stream().map(GroupMembersEntity::getGroupId).toList();
@@ -67,7 +67,7 @@ public class ListMyGroupsUseCase {
 
         if (request.id() != null) {
             if (!groupIds.contains(request.id())) {
-                return fromEntityToDomain.execute(Page.empty(pageable), groupMapper);
+                return pageResponseMapper.toPageResponse(Page.empty(pageable), groupMapper);
             }
             groupIdsSearch = List.of(request.id());
         }
@@ -79,7 +79,7 @@ public class ListMyGroupsUseCase {
                 .and(DynamicFilter.toEquals(request.city(), "city"))
                 .and(DynamicFilter.toEquals(request.state(), "state")), pageable);
 
-        return fromEntityToDomain.execute(groupsList, groupMapper);
+        return pageResponseMapper.toPageResponse(groupsList, groupMapper);
     }
 
 }

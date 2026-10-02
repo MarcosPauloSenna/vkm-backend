@@ -5,9 +5,9 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupSearchRequest;
-import com.vkm_backend.group.service.GetGroupsFromEntityToDomain;
 import com.vkm_backend.group.usecase.GroupFindUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
+import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.infra.global.exceptions.IllegalFieldArgumentException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +27,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,7 +39,7 @@ class GroupFindUseCaseTest {
     @Mock
     private GroupsRepository groupsRepository;
     @Mock
-    private GetGroupsFromEntityToDomain fromEntityToDomain;
+    private PageResponseMapper pageResponseMapper;
     @Mock
     private GroupMapper groupMapper;
     @InjectMocks
@@ -49,7 +50,7 @@ class GroupFindUseCaseTest {
         Page<GroupsEntity> page = new PageImpl<>(List.of(new GroupsEntity()));
         PageResponse<GroupResponse> expected = new PageResponse<>(List.of(), 0, 10, 1, 1, true, true, false, false);
         when(groupsRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-        when(fromEntityToDomain.execute(page, groupMapper)).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(page, groupMapper)).thenReturn(expected);
 
         PageResponse<GroupResponse> response = useCase.search(
                 new GroupSearchRequest(null, "volei", null, "cruz", null), PageRequest.of(0, 10));
@@ -60,7 +61,7 @@ class GroupFindUseCaseTest {
     @Test
     void shouldTranslateAllowedSortFields() {
         when(groupsRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(Page.empty());
-        when(fromEntityToDomain.execute(any(), any())).thenReturn(null);
+        when(pageResponseMapper.toPageResponse(any(Page.class), eq(groupMapper))).thenReturn(null);
 
         useCase.search(new GroupSearchRequest(null, null, null, null, null),
                 PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "cidade")));

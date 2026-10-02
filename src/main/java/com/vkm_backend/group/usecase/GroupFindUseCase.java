@@ -1,6 +1,6 @@
 package com.vkm_backend.group.usecase;
 
-import com.vkm_backend.group.service.GetGroupsFromEntityToDomain;
+import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.specification.DynamicFilter;
 import com.vkm_backend.infra.global.specification.DynamicSpecification;
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 public class GroupFindUseCase {
 
     private final GroupsRepository groupsRepository;
-    private final GetGroupsFromEntityToDomain fromEntityToDomain;
+    private final PageResponseMapper pageResponseMapper;
     private final GroupMapper groupMapper;
 
 
-    public GroupFindUseCase(GroupsRepository groupsRepository, GetGroupsFromEntityToDomain fromEntityToDomain, GroupMapper groupMapper) {
+    public GroupFindUseCase(GroupsRepository groupsRepository, PageResponseMapper pageResponseMapper, GroupMapper groupMapper) {
         this.groupsRepository = groupsRepository;
-        this.fromEntityToDomain = fromEntityToDomain;
+        this.pageResponseMapper = pageResponseMapper;
         this.groupMapper = groupMapper;
 
     }
@@ -45,7 +45,7 @@ public class GroupFindUseCase {
                 .and(DynamicFilter.toLike(request.state(), "state")),pageable);
 
 
-        return fromEntityToDomain.execute(groupsEntityList, groupMapper);
+        return pageResponseMapper.toPageResponse(groupsEntityList, groupMapper);
 
     }
 }

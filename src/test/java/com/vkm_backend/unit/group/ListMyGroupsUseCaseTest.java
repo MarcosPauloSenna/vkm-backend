@@ -7,9 +7,9 @@ import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.GroupSearchRequest;
-import com.vkm_backend.group.service.GetGroupsFromEntityToDomain;
 import com.vkm_backend.group.usecase.ListMyGroupsUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
+import com.vkm_backend.infra.global.mapper.PageResponseMapper;
 import com.vkm_backend.infra.global.exceptions.IllegalFieldArgumentException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
 import com.vkm_backend.user.infra.persistence.entities.UserEntity;
@@ -53,7 +53,7 @@ class ListMyGroupsUseCaseTest {
     @Mock
     private GroupMapper groupMapper;
     @Mock
-    private GetGroupsFromEntityToDomain fromEntityToDomain;
+    private PageResponseMapper pageResponseMapper;
     @InjectMocks
     private ListMyGroupsUseCase useCase;
 
@@ -74,7 +74,7 @@ class ListMyGroupsUseCaseTest {
                 .thenReturn(List.of(membership(10L), membership(20L)));
         Page<GroupsEntity> page = new PageImpl<>(List.of(group(10L), group(20L)));
         when(groupsRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-        when(fromEntityToDomain.execute(page, groupMapper)).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(page, groupMapper)).thenReturn(expected);
 
         PageResponse<GroupResponse> response = useCase.execute(emptyRequest(), USERNAME, PageRequest.of(0, 10));
 
@@ -88,7 +88,7 @@ class ListMyGroupsUseCaseTest {
                 .thenReturn(List.of(membership(10L), membership(20L)));
         Page<GroupsEntity> page = new PageImpl<>(List.of(group(20L)));
         when(groupsRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-        when(fromEntityToDomain.execute(page, groupMapper)).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(page, groupMapper)).thenReturn(expected);
 
         PageResponse<GroupResponse> response = useCase.execute(
                 new GroupSearchRequest(20L, null, null, null, null), USERNAME, PageRequest.of(0, 10));
@@ -101,7 +101,7 @@ class ListMyGroupsUseCaseTest {
     void shouldReturnEmptyPageWhenRequestedGroupIsNotOfTheUser() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(user);
         when(groupMembersRepository.findAll(any(Specification.class))).thenReturn(List.of(membership(10L)));
-        when(fromEntityToDomain.execute(any(Page.class), eq(groupMapper))).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(any(Page.class), eq(groupMapper))).thenReturn(expected);
 
         PageResponse<GroupResponse> response = useCase.execute(
                 new GroupSearchRequest(999L, null, null, null, null), USERNAME, PageRequest.of(0, 10));
@@ -114,7 +114,7 @@ class ListMyGroupsUseCaseTest {
     void shouldReturnEmptyPageWhenUserHasNoGroups() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(user);
         when(groupMembersRepository.findAll(any(Specification.class))).thenReturn(List.of());
-        when(fromEntityToDomain.execute(any(Page.class), eq(groupMapper))).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(any(Page.class), eq(groupMapper))).thenReturn(expected);
 
         PageResponse<GroupResponse> response = useCase.execute(emptyRequest(), USERNAME, PageRequest.of(0, 10));
 
@@ -137,7 +137,7 @@ class ListMyGroupsUseCaseTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(user);
         when(groupMembersRepository.findAll(any(Specification.class))).thenReturn(List.of(membership(10L)));
         when(groupsRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(Page.empty());
-        when(fromEntityToDomain.execute(any(Page.class), eq(groupMapper))).thenReturn(expected);
+        when(pageResponseMapper.toPageResponse(any(Page.class), eq(groupMapper))).thenReturn(expected);
 
         useCase.execute(emptyRequest(), USERNAME, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "nome")));
 
