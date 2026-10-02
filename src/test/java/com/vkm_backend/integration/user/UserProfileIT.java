@@ -122,7 +122,7 @@ class UserProfileIT extends AbstractIntegrationTest {
                 )
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
-                .andExpect(jsonPath("$.error").value("CONFLICT_EXCEPTION"));
+                .andExpect(jsonPath("$.error").value("CONFLICT"));
     }
 
     private String createUserAndLogin(
