@@ -7,6 +7,7 @@ import com.vkm_backend.group.usecase.ListMyGroupsUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
 import com.vkm_backend.user.infra.web.dto.*;
+import com.vkm_backend.user.usecase.FindUsersUseCase;
 import com.vkm_backend.user.usecase.UserUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,11 +32,13 @@ public class UserController {
 
     private  final UserUseCase userUseCase;
     private final ListMyGroupsUseCase listMyGroupsUseCase;
+    private final FindUsersUseCase findUsersUseCase;
 
-    public UserController(UserUseCase userUseCase, ListMyGroupsUseCase listMyGroupsUseCase) {
+    public UserController(UserUseCase userUseCase, ListMyGroupsUseCase listMyGroupsUseCase, FindUsersUseCase findUsersUseCase) {
 
         this.userUseCase = userUseCase;
         this.listMyGroupsUseCase = listMyGroupsUseCase;
+        this.findUsersUseCase = findUsersUseCase;
     }
 
     @PostMapping("/create")
@@ -62,20 +65,22 @@ public class UserController {
     @GetMapping("/searchall")
         @Operation(
             summary = "Listar todos os usuários",
-            description = "Retorna todos os usuários cadastrados. Operação restrita a usuários com papel administrativo.",
+            description = "Retorna os usuários cadastrados, podendo ser aplicados filtros. Operação restrita a usuários com papel administrativo.",
             tags = {"Usuários"}
         )
         @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Usuários retornados com sucesso",
-                content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserAdmResponse.class))),
             @ApiResponse(responseCode = "401", description = "Token de acesso ausente ou inválido",
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "Usuário sem permissão administrativa",
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
         })
-    public List<UserResponse> findAllUsers(){
+    public ResponseEntity<UserAdmResponse> findAllUsers(@ModelAttribute FindUserAdmRequest request, Pageable pageable){
 
-        return userUseCase.listAllUsers();
+        PageResponse<UserResponse> response = findUsersUseCase.execute(request, pageable);
+
+        return ResponseEntity.ok(new UserAdmResponse(response, "Operação realizada com sucesso!"));
 
     }
 

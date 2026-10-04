@@ -56,21 +56,6 @@ public class UserUseCase {
 
     }
 
-
-    public List<UserResponse> listAllUsers(){
-         List<UserResponse> users = new ArrayList<>();
-
-         List<UserEntity> usersEnt = userRepository.findAll();
-
-         for (UserEntity userEnt: usersEnt){
-             User user = userMapper.toDomain(userEnt);
-             users.add(userMapper.toResponse(user));
-         }
-
-         return users;
-    }
-
-
     public UserResponse getMe(String userNamer){
         UserEntity user = userRepository.findByUsername(userNamer);
         if (user == null) {
