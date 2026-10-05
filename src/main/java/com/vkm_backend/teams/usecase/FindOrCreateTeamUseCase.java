@@ -20,6 +20,7 @@ import com.vkm_backend.teams.service.CreateTeamService;
 import com.vkm_backend.teams.service.ValidateFormationTeamService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,9 +48,10 @@ public class FindOrCreateTeamUseCase {
     }
 
     @Transactional
-    public FindOrCreateTeamResponse execute(FindOrCreateTeamRequest request) {
+    public FindOrCreateTeamResponse execute(FindOrCreateTeamRequest request, Long groupId) {
 
-        ValidationResponse teamValidationResponse = validateFormationTeamService.validateMemberInGroupId(request.memberIds(), request.groupId());
+        ValidationResponse teamValidationResponse = validateFormationTeamService.validateMemberInGroupId(request.memberIds(),
+                groupId);
 
         CompositionHash compositionHash = compositionHashGenerator.generate(request.memberIds());
 

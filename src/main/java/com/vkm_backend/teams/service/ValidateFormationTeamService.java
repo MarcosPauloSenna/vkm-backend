@@ -33,7 +33,7 @@ public class ValidateFormationTeamService {
         Collection<GroupMembersEntity> teamMembers = new ArrayList<>();
 
         for (Long id : memberId) {
-            Optional<GroupMembersEntity> member = groupMembersRepository.findByIdAndGroupId_Id(groupId, id);
+            Optional<GroupMembersEntity> member = groupMembersRepository.findByIdAndGroupId_Id(id, groupId);
             if (member.isEmpty()) {
                 throw new ValidationException("1 ou mais membros não pertence ao grupo " + group.get().getName());
             }

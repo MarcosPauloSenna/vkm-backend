@@ -16,6 +16,7 @@ import com.vkm_backend.teams.infra.persistence.web.dto.ValidationResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,11 +38,26 @@ public class CreateTeamService {
     @Transactional
     public FindOrCreateTeamResponse execute(ValidationResponse request, String name, CompositionHash compositionHash) {
 
+        if (name == null || name.isEmpty()) {
+            //Caso nome do time em branco, criar nome do time com as iniciais dos membros
+            StringBuilder initials = new StringBuilder();
+            for (GroupMembersEntity member : request.teamMembers()) {
+                String[] nameParts = member.getUserId().getName().split(" ");
+                for (String part : nameParts) {
+                    if (!part.isEmpty()) {
+                        initials.append(part.charAt(0));
+                    }
+                }
+            }
+            name = initials.toString();
+        }
+
         TeamsEntity team = new TeamsEntity();
         team.setGroupId(request.group());
         team.setName(name);
         team.setTeamSize(request.teamMembers().size());
         team.setCompositionHash(compositionHash);
+        team.setCreatedAt(Instant.now());
         TeamsEntity teamSave = teamsRepository.save(team);
 
         Teams teamResponse = teamsMapper.toDomain(teamSave);
@@ -52,6 +68,7 @@ public class CreateTeamService {
             TeamMembersEntity teamMember = new TeamMembersEntity();
             teamMember.setTeamsId(teamSave);
             teamMember.setGroupMembersId(member);
+            teamMember.setCreatedAt(Instant.now());
             teamMembersRepository.save(teamMember);
             members.add(teamMember);
         }
