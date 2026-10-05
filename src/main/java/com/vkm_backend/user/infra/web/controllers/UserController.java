@@ -84,7 +84,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/groups")
+    @GetMapping("/{userId}/groups")
     @Operation(
             summary = "Listar grupos do usuário informado",
             description = "Retorna apenas os grupos dos quais o usuário informado participa (qualquer status de vínculo), " +
@@ -102,7 +102,7 @@ public class UserController {
     })
     public ResponseEntity<GroupsSearchResponse> searchUserGroups(@ModelAttribute GroupSearchRequest request,
                                                                  Pageable pageable,
-                                                                 @RequestBody Long userId) {
+                                                                 @PathVariable Long userId) {
         PageResponse<GroupResponse> response = listUserGroupsUseCase.execute(request, userId, pageable);
 
         return ResponseEntity.ok().body(new GroupsSearchResponse(response,
