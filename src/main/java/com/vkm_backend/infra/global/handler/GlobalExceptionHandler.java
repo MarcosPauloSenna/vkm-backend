@@ -38,6 +38,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> illegalStateException (IllegalStateException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "ILLEGAL_STATE");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(IllegalFieldArgumentException.class)
     public ResponseEntity<ErrorResponse> illegalFieldArgumentException (IllegalFieldArgumentException ex, HttpServletRequest request){
         String endPoint =  request.getRequestURI();

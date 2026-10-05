@@ -4,6 +4,8 @@ import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 
 @Getter
 @Setter
@@ -13,14 +15,17 @@ public class Teams {
     private String name;
     private Integer teamSize;
     private CompositionHash compositionHash;
-    private Long createdAt;
+    private Instant createdAt;
 
-    public Teams(CompositionHash compositionHash, Long createdAt, GroupsEntity groupId, Long id, String name, Integer teamSize) {
+    public Teams(CompositionHash compositionHash, Instant createdAt, GroupsEntity groupId, Long id, String name, Integer teamSize) {
         this.compositionHash = compositionHash;
         this.createdAt = createdAt;
         this.groupId = groupId;
         this.id = id;
         this.name = name;
         this.teamSize = teamSize;
+    }
+
+    public Teams() {
     }
 }

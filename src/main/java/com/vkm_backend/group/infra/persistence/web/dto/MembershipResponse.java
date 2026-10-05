@@ -4,5 +4,5 @@ public record MembershipResponse(Long id,
                                  String groupName,
                                  String username,
                                  String role,
-                                 String satus) {
+                                 String status) {
 }
