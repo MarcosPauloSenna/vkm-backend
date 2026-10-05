@@ -12,7 +12,6 @@ import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.util.Optional;
 
 @Service

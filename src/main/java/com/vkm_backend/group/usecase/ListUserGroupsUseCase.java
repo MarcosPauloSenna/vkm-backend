@@ -10,36 +10,36 @@ import com.vkm_backend.user.infra.persistence.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import java.util.Optional;
 
 @Service
-public class ListMyGroupsUseCase {
+public class ListUserGroupsUseCase {
 
     private final UserRepository userRepository;
     private final ListGroupsUserservice listGroupsUserservice ;
 
-    public ListMyGroupsUseCase(UserRepository userRepository, ListGroupsUserservice listGroupsUserservice) {
+    public ListUserGroupsUseCase(UserRepository userRepository, ListGroupsUserservice listGroupsUserservice) {
         this.userRepository = userRepository;
         this.listGroupsUserservice = listGroupsUserservice;
     }
 
 
     @Transactional
-    public PageResponse<GroupResponse> execute(GroupSearchRequest request, String username, Pageable pageable) {
+    public PageResponse<GroupResponse> execute(GroupSearchRequest request, Long userId, Pageable pageable) {
         pageable = SortWhitelist.validate(
                 pageable,
                 GroupSortFields.SORT_FIELDS
         );
 
-        UserEntity user = userRepository.findByUsername(username);
+        Optional<UserEntity> userFind = userRepository.findById(userId);
 
-        if (user == null) {
+        if (userFind.isEmpty()) {
             throw new ValidationException("Usuario não localizado");
         }
 
+        UserEntity user = userFind.get();
+
         return listGroupsUserservice.getGroupUserService(request, pageable, user);
     }
-
-
 
 }
