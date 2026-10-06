@@ -6,7 +6,6 @@ import com.vkm_backend.teams.infra.persistence.entities.TeamMembersEntity;
 import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
 import com.vkm_backend.teams.infra.persistence.repository.TeamMembersRepository;
 import com.vkm_backend.teams.infra.persistence.web.dto.FindOrCreateTeamResponse;
-import com.vkm_backend.teams.infra.persistence.web.dto.TeamMembersResponse;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +32,7 @@ public class FindTeamMembersService {
             Members.add(teamMembersMapper.toDomain(member));
         }
 
-        TeamMembersResponse teamMembersResponse = teamMembersMapper.toResponse(Members);
-
-        return new FindOrCreateTeamResponse(team.getId(), team.getName(), team.getTeamSize(), teamMembersResponse);
+        return teamMembersMapper.toResponse(Members);
     }
 }
 

@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Resposta da operação de criação/busca de time")
 public record TeamInfoResponse(
         @Schema(description = "Dados do time")
-        FindOrCreateTeamResponse teamMembersResponse,
+        FindOrCreateTeamResponse team,
         @Schema(description = "Mensagem da operação", example = "Operação realizada com sucesso!")
         String message) {
 }

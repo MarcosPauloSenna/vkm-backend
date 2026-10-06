@@ -5,14 +5,14 @@ import com.vkm_backend.group.infra.persistence.web.dto.ListTeamMembers;
 import com.vkm_backend.infra.global.mapper.EntityMapper;
 import com.vkm_backend.teams.domain.TeamMembers;
 import com.vkm_backend.teams.infra.persistence.entities.TeamMembersEntity;
-import com.vkm_backend.teams.infra.persistence.web.dto.TeamMembersResponse;
+import com.vkm_backend.teams.infra.persistence.web.dto.FindOrCreateTeamResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
-public class TeamMembersMapper implements EntityMapper<TeamMembersEntity, TeamMembers, TeamMembersResponse> {
+public class TeamMembersMapper implements EntityMapper<TeamMembersEntity, TeamMembers, FindOrCreateTeamResponse> {
 
     @Override
     public TeamMembersEntity toEntity(TeamMembers domain) {
@@ -35,12 +35,12 @@ public class TeamMembersMapper implements EntityMapper<TeamMembersEntity, TeamMe
     }
 
     @Override
-    public TeamMembersResponse toResponse(TeamMembers domain) {
+    public FindOrCreateTeamResponse toResponse(TeamMembers domain) {
         return null;
     }
 
 
-    public TeamMembersResponse toResponse(Collection<TeamMembers> domain) {
+    public FindOrCreateTeamResponse toResponse(Collection<TeamMembers> domain) {
         Collection<ListTeamMembers> members = new ArrayList<>();
 
         for (TeamMembers member: domain) {
@@ -49,11 +49,11 @@ public class TeamMembersMapper implements EntityMapper<TeamMembersEntity, TeamMe
                 member.getGroupMembersId().getStatus().toString()));
         }
 
-        return new TeamMembersResponse(
+        return new FindOrCreateTeamResponse(
                 domain.stream().findFirst().get().getId(),
                 domain.stream().findFirst().get().getTeamsId().getName(),
-                members,
-                domain.stream().findFirst().get().getCreatedAt()
+                domain.size(),
+                members
         );
 
     }

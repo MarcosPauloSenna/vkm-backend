@@ -75,6 +75,8 @@ public class TeamsController {
             @ApiResponse(responseCode = "401", description = "Não autenticado ou membro sem permissão (status diferente de APPROVED)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Grupo ou membro não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não é membro deste grupo.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<TeamInfoResponse> getTeam(@Parameter(description = "Identificador do time", example = "15")
