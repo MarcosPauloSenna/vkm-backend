@@ -1,7 +1,5 @@
 package com.vkm_backend.user.usecase;
 
-import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
-import com.vkm_backend.group.usecase.GroupSortFields;
 import com.vkm_backend.group.usecase.SortWhitelist;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.mapper.PageResponseMapper;

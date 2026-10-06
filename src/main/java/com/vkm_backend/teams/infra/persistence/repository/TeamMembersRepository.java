@@ -5,7 +5,6 @@ import com.vkm_backend.teams.infra.persistence.entities.TeamMembersEntity;
 import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface TeamMembersRepository extends DynamicRepository<TeamMembersEntity, Long> {
 

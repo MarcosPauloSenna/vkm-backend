@@ -1,11 +1,11 @@
 package com.vkm_backend.user.infra.mapper;
 
 
+import com.vkm_backend.infra.global.mapper.EntityMapper;
 import com.vkm_backend.user.domain.User;
 import com.vkm_backend.user.infra.persistence.entities.UserEntity;
 import com.vkm_backend.user.infra.web.dto.CreateUserRequest;
 import com.vkm_backend.user.infra.web.dto.UserResponse;
-import com.vkm_backend.infra.global.mapper.EntityMapper;
 import org.springframework.stereotype.Component;
 
 @Component

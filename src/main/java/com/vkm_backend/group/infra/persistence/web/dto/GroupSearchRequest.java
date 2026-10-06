@@ -1,7 +1,6 @@
 package com.vkm_backend.group.infra.persistence.web.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Size;
 
 public record GroupSearchRequest(@Schema(description = "Id do grupo", example = "15")
                                  Long id,

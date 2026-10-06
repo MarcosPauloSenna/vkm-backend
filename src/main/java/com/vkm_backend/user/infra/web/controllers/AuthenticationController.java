@@ -2,12 +2,8 @@ package com.vkm_backend.user.infra.web.controllers;
 
 
 import com.vkm_backend.infra.global.handler.ErrorResponse;
-import com.vkm_backend.user.infra.web.dto.AuthenticationRequest;
-import com.vkm_backend.user.infra.web.dto.AuthenticationResponse;
-import com.vkm_backend.user.infra.web.dto.RefreshTokenRequest;
-import com.vkm_backend.user.infra.web.dto.RefreshTokenResult;
+import com.vkm_backend.user.infra.web.dto.*;
 import com.vkm_backend.user.service.AccessTokenService;
-import com.vkm_backend.user.infra.web.dto.LogoutRequest;
 import com.vkm_backend.user.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
