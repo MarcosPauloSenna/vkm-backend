@@ -1,12 +1,12 @@
 package com.vkm_backend.teams.infra.persistence.web.controller;
 
 import com.vkm_backend.group.service.GroupMemberAccessPolicy;
+import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
-import com.vkm_backend.teams.infra.persistence.web.dto.FindOrCreateTeamRequest;
-import com.vkm_backend.teams.infra.persistence.web.dto.FindOrCreateTeamResponse;
-import com.vkm_backend.teams.infra.persistence.web.dto.TeamInfoResponse;
+import com.vkm_backend.teams.infra.persistence.web.dto.*;
 import com.vkm_backend.teams.usecase.FindCompositionTeamsUseCase;
 import com.vkm_backend.teams.usecase.FindOrCreateTeamUseCase;
+import com.vkm_backend.teams.usecase.SearchTeamsUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,13 @@ public class TeamsController {
     private final FindOrCreateTeamUseCase findOrCreateTeamUseCase;
     private final GroupMemberAccessPolicy groupMemberAccessPolicy;
     private final FindCompositionTeamsUseCase findCompositionTeamsUseCase;
+    private final SearchTeamsUseCase searchTeamsUseCase;
 
-    public TeamsController(FindOrCreateTeamUseCase findOrCreateTeamUseCase, GroupMemberAccessPolicy groupMemberAccessPolicy, FindCompositionTeamsUseCase findCompositionTeamsUseCase) {
+    public TeamsController(FindOrCreateTeamUseCase findOrCreateTeamUseCase, GroupMemberAccessPolicy groupMemberAccessPolicy, FindCompositionTeamsUseCase findCompositionTeamsUseCase, SearchTeamsUseCase searchTeamsUseCase) {
         this.findOrCreateTeamUseCase = findOrCreateTeamUseCase;
         this.groupMemberAccessPolicy = groupMemberAccessPolicy;
         this.findCompositionTeamsUseCase = findCompositionTeamsUseCase;
+        this.searchTeamsUseCase = searchTeamsUseCase;
     }
 
     @PostMapping("/create")
@@ -87,5 +90,33 @@ public class TeamsController {
         FindOrCreateTeamResponse response = findCompositionTeamsUseCase.execute(teamId);
 
         return ResponseEntity.ok().body(new TeamInfoResponse(response, "Operação realizada com sucesso!"));
+    }
+
+    @PostMapping("/search")
+    @Operation(
+            summary = "Busca times dentro de um grupo",
+            description = "Busca times dentro de um grupo com base nos critérios fornecidos. O usuário autenticado precisa ser membro aprovado do grupo.",
+            tags = {"Teams"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeamsGroupResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos para a busca de times",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado ou membro sem permissão (status diferente de APPROVED)",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Grupo não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity getTeams(@PathVariable Long groupId,
+                                   @RequestBody TeamsSearchRequest request,
+                                   Pageable pageable,
+                                   Authentication auth) {
+
+        groupMemberAccessPolicy.authorize(groupId, auth.getName());
+        PageResponse<TeamsGroupResponse> response = searchTeamsUseCase.execute(groupId, request, pageable);
+
+
+        return ResponseEntity.ok().body(response);
     }
 }
