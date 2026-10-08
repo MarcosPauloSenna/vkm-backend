@@ -15,8 +15,6 @@ public record TeamResponse(
         String teamName,
         @Schema(description = "Quantidade de membros", example = "6")
         Integer teamSize,
-        @Schema(description = "Hash da composição do time")
-        CompositionHash compositionHash,
         @Schema(description = "Data de criação", example = "2026-10-05T17:26:41Z")
         Instant createdAt) {
 }

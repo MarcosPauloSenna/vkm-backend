@@ -1,5 +1,6 @@
 package com.vkm_backend.teams.infra.specification;
 
+import com.vkm_backend.teams.domain.MemberFilterMode;
 import com.vkm_backend.teams.infra.persistence.entities.TeamMembersEntity;
 import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
 import jakarta.persistence.criteria.Predicate;
@@ -13,7 +14,8 @@ import java.util.List;
 
 public final class TeamSpecification {
 
-    public static Specification<TeamsEntity> hasMemberId(List<Long> membersId) {
+    public static Specification<TeamsEntity> hasMemberId(List<Long> membersId,
+                                                         MemberFilterMode mode) {
         if (membersId == null || membersId.isEmpty()) {
             return(root, query, cb) -> cb.conjunction();
         }
@@ -28,10 +30,12 @@ public final class TeamSpecification {
 
                 subquery.select(teamMember.get("teamsId"))
                         .where(criteriaBuilder.equal(teamMember.get("teamsId"), root),
-                                criteriaBuilder.equal(teamMember.get("id"), memberId));
+                                criteriaBuilder.equal(teamMember.get("groupMembersId").get("id"), memberId));
                 predicates.add(criteriaBuilder.exists(subquery));
             }
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            return mode == MemberFilterMode.ALL
+                    ? criteriaBuilder.and(predicates.toArray(new Predicate[0]))
+                    : criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         };
     }
 }

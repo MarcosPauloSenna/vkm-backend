@@ -7,6 +7,11 @@ import com.vkm_backend.group.usecase.ListMyGroupsUseCase;
 import com.vkm_backend.group.usecase.ListUserGroupsUseCase;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.handler.ErrorResponse;
+import com.vkm_backend.teams.infra.persistence.web.dto.MyTeamsSearchRequest;
+import com.vkm_backend.teams.infra.persistence.web.dto.TeamResponse;
+import com.vkm_backend.teams.infra.persistence.web.dto.TeamsSearchRequest;
+import com.vkm_backend.teams.infra.persistence.web.dto.TeamsSearchResponse;
+import com.vkm_backend.teams.usecase.SearchMyTeamsUseCase;
 import com.vkm_backend.user.infra.web.dto.*;
 import com.vkm_backend.user.usecase.FindUsersUseCase;
 import com.vkm_backend.user.usecase.UserUseCase;
@@ -32,13 +37,15 @@ public class UserController {
     private final ListMyGroupsUseCase listMyGroupsUseCase;
     private final FindUsersUseCase findUsersUseCase;
     private final ListUserGroupsUseCase listUserGroupsUseCase;
+    private final SearchMyTeamsUseCase searchMyTeamsUseCase;
 
-    public UserController(UserUseCase userUseCase, ListMyGroupsUseCase listMyGroupsUseCase, FindUsersUseCase findUsersUseCase, ListUserGroupsUseCase listUserGroupsUseCase) {
+    public UserController(UserUseCase userUseCase, ListMyGroupsUseCase listMyGroupsUseCase, FindUsersUseCase findUsersUseCase, ListUserGroupsUseCase listUserGroupsUseCase, SearchMyTeamsUseCase searchMyTeamsUseCase) {
 
         this.userUseCase = userUseCase;
         this.listMyGroupsUseCase = listMyGroupsUseCase;
         this.findUsersUseCase = findUsersUseCase;
         this.listUserGroupsUseCase = listUserGroupsUseCase;
+        this.searchMyTeamsUseCase = searchMyTeamsUseCase;
     }
 
     @PostMapping("/create")
@@ -194,6 +201,37 @@ public class UserController {
         PageResponse<GroupResponse> response = listMyGroupsUseCase.execute(request, auth.getName(), pageable);
 
         return ResponseEntity.ok().body(new GroupsSearchResponse(response,
+                "Operação realizada com sucesso!"));
+    }
+
+    @PostMapping ("/myteams")
+    @Operation(
+            summary = "Listar meus times",
+            description = "Retorna apenas os times dos quais o usuário autenticado participa (qualquer status de vínculo), " +
+                    "nunca a lista completa de times do sistema. Suporta os mesmos filtros de busca de times (id, name, " +
+                    "memberIds, createdAtFrom, createdAtTo, size, memberFilterMode) restritos ao escopo do usuário autenticado.",
+            tags = {"Usuários"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Times do usuário retornados com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeamsSearchResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Token de acesso ausente ou inválido",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<TeamsSearchResponse> searchMyTeams(@RequestBody MyTeamsSearchRequest request,
+                                          Pageable pageable, Authentication auth) {
+
+        TeamsSearchRequest dada = new TeamsSearchRequest(request.id(),
+                request.name(),
+                request.memberIds(),
+                request.createdAtFrom(),
+                request.createdAtTo(),
+                request.size(),
+                request.memberFilterMode());
+
+        PageResponse<TeamResponse> response = searchMyTeamsUseCase.execute(request.groupId(), auth.getName(), dada, pageable);
+
+        return ResponseEntity.ok().body(new TeamsSearchResponse(response,
                 "Operação realizada com sucesso!"));
     }
 

@@ -59,8 +59,6 @@ public class CreateTeamService {
         team.setCreatedAt(Instant.now());
         TeamsEntity teamSave = teamsRepository.save(team);
 
-        Teams teamResponse = teamsMapper.toDomain(teamSave);
-
         Collection<TeamMembersEntity> members = new ArrayList<>();
 
         for (GroupMembersEntity member : request.teamMembers()) {

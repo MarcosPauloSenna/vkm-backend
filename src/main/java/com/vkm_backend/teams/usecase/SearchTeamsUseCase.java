@@ -14,6 +14,7 @@ import com.vkm_backend.teams.infra.persistence.web.dto.TeamResponse;
 import com.vkm_backend.teams.infra.persistence.web.dto.TeamsGroupResponse;
 import com.vkm_backend.teams.infra.persistence.web.dto.TeamsSearchRequest;
 import com.vkm_backend.teams.infra.specification.TeamSpecification;
+import com.vkm_backend.teams.service.SearchTeamsService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,17 +24,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class SearchTeamsUseCase {
 
-    private final TeamsRepository teamsRepository;
+
     private final GroupsRepository groupsRepository;
     private final TeamsMapper teamsMapper;
     private final PageResponseMapper pageResponseMapper;
+    private final SearchTeamsService searchTeamsService;
 
-
-    public SearchTeamsUseCase(TeamsRepository teamsRepository, GroupsRepository groupsRepository, TeamsMapper teamsMapper, PageResponseMapper pageResponseMapper) {
-        this.teamsRepository = teamsRepository;
-        this.groupsRepository = groupsRepository;
+    public SearchTeamsUseCase(GroupsRepository groupsRepository, TeamsMapper teamsMapper, PageResponseMapper pageResponseMapper, SearchTeamsService searchTeamsService) {
+          this.groupsRepository = groupsRepository;
         this.teamsMapper = teamsMapper;
         this.pageResponseMapper = pageResponseMapper;
+        this.searchTeamsService = searchTeamsService;
     }
 
     @Transactional
@@ -41,21 +42,11 @@ public class SearchTeamsUseCase {
                                                     TeamsSearchRequest request,
                                                     Pageable pageable) {
 
-        Specification<TeamsEntity> teamsEntitySpecification = TeamSpecification.hasMemberId(request.memberIds());
-
         GroupsEntity group = groupsRepository.findById(groupId)
                 .orElseThrow(GroupNotFoundException::new);
 
-        Page<TeamsEntity> teamsEntityList = teamsRepository.findAll(DynamicSpecification
-                        .<TeamsEntity>where(DynamicFilter.toEquals(group, "groupId"))
-                        .and(DynamicFilter.toLike(request.name(), "name"))
-                        .and(DynamicFilter.toEquals(request.id(), "id"))
-                        .and(DynamicFilter.toGreaterEqualTo(request.createdAtFrom(), "createdAt"))
-                        .and(DynamicFilter.toLessEqualTo(request.createdAtTo(), "createdAt"))
-                        .and(DynamicFilter.toEquals(request.size(), "teamSize"))
-                        .and(teamsEntitySpecification), pageable);
 
-
+        Page<TeamsEntity> teamsEntityList = searchTeamsService.searchTeams(group, request, pageable);
 
         return pageResponseMapper.toPageResponse(teamsEntityList,
                 entity -> teamsMapper.toResponse(teamsMapper.toResponse(teamsMapper.toDomain(entity))));

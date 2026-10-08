@@ -37,7 +37,6 @@ public class TeamsMapper implements EntityMapper<TeamsEntity, Teams, TeamRespons
                 domain.getGroupId().getName(),
                 domain.getName(),
                 domain.getTeamSize(),
-                domain.getCompositionHash(),
                 domain.getCreatedAt()
         );
     }
@@ -50,5 +49,4 @@ public class TeamsMapper implements EntityMapper<TeamsEntity, Teams, TeamRespons
                 resp.createdAt()
         );
     }
-
 }
