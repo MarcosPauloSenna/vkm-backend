@@ -8,6 +8,8 @@ CREATE TABLE team_members
     CONSTRAINT FK_TEAM_MEMBERS_GROUP_MEMBERS FOREIGN KEY (group_members_id)
         REFERENCES group_members (id) ON DELETE CASCADE,
     CONSTRAINT FK_TEAM_MEMBERS_TEAMS FOREIGN KEY (teams_id)
-        REFERENCES teams (id) ON DELETE CASCADE
+        REFERENCES teams (id) ON DELETE CASCADE,
+    CONSTRAINT uk_team_member
+        UNIQUE (teams_id, group_members_id)
 );
 
