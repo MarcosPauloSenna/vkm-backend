@@ -42,8 +42,15 @@ public class ValidateFormationTeamService {
                 throw new ValidationException("1 ou mais membros do time não estão aprovados no grupo " + group.get().getName() + "!");
             }
 
+            if (teamMembers.contains(member.get())) {
+                throw new ValidationException(
+                        "Não é permitido adicionar o mesmo membro mais de uma vez ao time."
+                );
+            }
+
             teamMembers.add(member.get());
         }
+
 
         GroupsEntity groupEntity = group.get();
 
