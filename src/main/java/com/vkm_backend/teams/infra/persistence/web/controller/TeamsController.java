@@ -7,6 +7,7 @@ import com.vkm_backend.teams.infra.persistence.web.dto.*;
 import com.vkm_backend.teams.usecase.FindCompositionTeamsUseCase;
 import com.vkm_backend.teams.usecase.FindOrCreateTeamUseCase;
 import com.vkm_backend.teams.usecase.SearchTeamsUseCase;
+import com.vkm_backend.teams.usecase.UpadateNameTeamUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,12 +30,14 @@ public class TeamsController {
     private final GroupMemberAccessPolicy groupMemberAccessPolicy;
     private final FindCompositionTeamsUseCase findCompositionTeamsUseCase;
     private final SearchTeamsUseCase searchTeamsUseCase;
+    private final UpadateNameTeamUseCase upadateNameTeamUseCase;
 
-    public TeamsController(FindOrCreateTeamUseCase findOrCreateTeamUseCase, GroupMemberAccessPolicy groupMemberAccessPolicy, FindCompositionTeamsUseCase findCompositionTeamsUseCase, SearchTeamsUseCase searchTeamsUseCase) {
+    public TeamsController(FindOrCreateTeamUseCase findOrCreateTeamUseCase, GroupMemberAccessPolicy groupMemberAccessPolicy, FindCompositionTeamsUseCase findCompositionTeamsUseCase, SearchTeamsUseCase searchTeamsUseCase, UpadateNameTeamUseCase upadateNameTeamUseCase) {
         this.findOrCreateTeamUseCase = findOrCreateTeamUseCase;
         this.groupMemberAccessPolicy = groupMemberAccessPolicy;
         this.findCompositionTeamsUseCase = findCompositionTeamsUseCase;
         this.searchTeamsUseCase = searchTeamsUseCase;
+        this.upadateNameTeamUseCase = upadateNameTeamUseCase;
     }
 
     @PostMapping("/create")
@@ -118,5 +122,32 @@ public class TeamsController {
 
 
         return ResponseEntity.ok().body(response);
+    }
+
+
+    @PatchMapping("/{teamId}/name")
+    @Operation(
+            summary = "Atualiza o nome de um time",
+            description = "Atualiza o nome de um time dentro de um grupo. O usuário autenticado precisa ser membro aprovado do grupo.",
+            tags = {"Teams"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeamsGroupResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos para a atualização do nome do time",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado ou membro sem permissão (status diferente de APPROVED)",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Grupo ou time não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity updateTeamName(@PathVariable Long groupId,
+                                            @PathVariable Long teamId,
+                                            @Valid @RequestBody UpdateNameRequest request,
+                                            Authentication auth) {
+        groupMemberAccessPolicy.authorize(groupId, auth.getName());
+        TeamsGroupResponse response = upadateNameTeamUseCase.execute(teamId, request.newName(), groupId, auth.getName());
+
+        return ResponseEntity.ok().body(new UpdateNameResponse(response, "Operação realizada com sucesso!"));
     }
 }
