@@ -44,7 +44,7 @@ public class TeamsMapper implements EntityMapper<TeamsEntity, Teams, TeamRespons
     public TeamsGroupResponse toResponse(TeamResponse resp) {
         return new TeamsGroupResponse(
                 resp.id(),
-                resp.groupName(),
+                resp.teamName(),
                 resp.teamSize(),
                 resp.createdAt()
         );
