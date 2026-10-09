@@ -40,7 +40,7 @@ public class FindOrCreateTeamUseCase {
 
         CompositionHash compositionHash = compositionHashGenerator.generate(request.memberIds());
 
-        TeamsEntity team = teamsRepository.findByCompositionHash(compositionHash);
+        TeamsEntity team = teamsRepository.findByGroupId_IdAndCompositionHash(groupId, compositionHash);
         if (team != null) {
             return findTeamMembersService.execute(team);
         }

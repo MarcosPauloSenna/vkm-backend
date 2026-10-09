@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 @Service
 public class ValidateFormationTeamService {
 
@@ -31,8 +33,15 @@ public class ValidateFormationTeamService {
         }
 
         Collection<GroupMembersEntity> teamMembers = new ArrayList<>();
+        Set<Long> seenMemberIds = new HashSet<>();
 
         for (Long id : memberId) {
+            if (!seenMemberIds.add(id)) {
+                throw new ValidationException(
+                        "Não é permitido adicionar o mesmo membro mais de uma vez ao time."
+                );
+            }
+
             Optional<GroupMembersEntity> member = groupMembersRepository.findByIdAndGroupId_Id(id, groupId);
             if (member.isEmpty()) {
                 throw new ValidationException("1 ou mais membros não pertence ao grupo " + group.get().getName());
@@ -40,12 +49,6 @@ public class ValidateFormationTeamService {
 
             if (!member.get().getStatus().equals(GroupMemberStatus.APPROVED)) {
                 throw new ValidationException("1 ou mais membros do time não estão aprovados no grupo " + group.get().getName() + "!");
-            }
-
-            if (teamMembers.contains(member.get())) {
-                throw new ValidationException(
-                        "Não é permitido adicionar o mesmo membro mais de uma vez ao time."
-                );
             }
 
             teamMembers.add(member.get());

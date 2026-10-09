@@ -91,7 +91,7 @@ public class TeamsController {
                                                     @PathVariable Long groupId,
                                                     Authentication auth) {
         groupMemberAccessPolicy.authorize(groupId, auth.getName());
-        FindOrCreateTeamResponse response = findCompositionTeamsUseCase.execute(teamId);
+        FindOrCreateTeamResponse response = findCompositionTeamsUseCase.execute(teamId, groupId);
 
         return ResponseEntity.ok().body(new TeamInfoResponse(response, "Operação realizada com sucesso!"));
     }

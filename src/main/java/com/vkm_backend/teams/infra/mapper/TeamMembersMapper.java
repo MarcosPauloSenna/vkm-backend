@@ -49,10 +49,11 @@ public class TeamMembersMapper implements EntityMapper<TeamMembersEntity, TeamMe
                 member.getGroupMembersId().getStatus().toString()));
         }
 
+        TeamMembers firstMember = domain.stream().findFirst().orElseThrow();
         return new FindOrCreateTeamResponse(
-                domain.stream().findFirst().get().getId(),
-                domain.stream().findFirst().get().getTeamsId().getName(),
-                domain.size(),
+                firstMember.getTeamsId().getId(),
+                firstMember.getTeamsId().getName(),
+                firstMember.getTeamsId().getTeamSize(),
                 members
         );
 

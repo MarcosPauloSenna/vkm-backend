@@ -1,6 +1,7 @@
 package com.vkm_backend.teams.usecase;
 
 import com.vkm_backend.infra.global.exceptions.BusinessException;
+import com.vkm_backend.infra.global.exceptions.ResourceNotFoundException;
 import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
 import com.vkm_backend.teams.infra.persistence.repository.TeamsRepository;
 import com.vkm_backend.teams.infra.persistence.web.dto.FindOrCreateTeamResponse;
@@ -23,9 +24,12 @@ public class FindCompositionTeamsUseCase {
     }
 
     @Transactional
-    public FindOrCreateTeamResponse execute(Long teamId) {
+    public FindOrCreateTeamResponse execute(Long teamId, Long groupId) {
 
         TeamsEntity team = teamsRepository.findById(teamId).orElseThrow(() -> new BusinessException("Time não encontrado"));
+        if (!team.getGroupId().getId().equals(groupId)) {
+            throw new ResourceNotFoundException("Time não encontrado no grupo.");
+        }
 
         return findTeamMembersService.execute(team);
 

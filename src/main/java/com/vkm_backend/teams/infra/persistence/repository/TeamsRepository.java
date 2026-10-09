@@ -6,6 +6,5 @@ import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
 
 public interface TeamsRepository extends DynamicRepository<TeamsEntity, Long> {
 
-
-    TeamsEntity findByCompositionHash(CompositionHash compositionHash);
+    TeamsEntity findByGroupId_IdAndCompositionHash(Long groupId, CompositionHash compositionHash);
 }
