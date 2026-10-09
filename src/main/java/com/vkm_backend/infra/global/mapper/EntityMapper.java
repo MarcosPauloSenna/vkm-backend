@@ -1,5 +1,7 @@
 package com.vkm_backend.infra.global.mapper;
 
+import org.mapstruct.Mapper;
+
 /**
  * Contrato comum dos mappers do projeto: entidade (persistência) -> domínio -> response (web).
  *
@@ -7,6 +9,7 @@ package com.vkm_backend.infra.global.mapper;
  * @param <D> objeto de domínio
  * @param <R> response devolvido pela API
  */
+
 public interface EntityMapper<E, D, R> {
 
     E toEntity(D domain);
