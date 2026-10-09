@@ -1,6 +1,5 @@
 package com.vkm_backend.teams.infra.persistence.web.dto;
 
-import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.teams.domain.MemberFilterMode;
 
 import java.time.Instant;

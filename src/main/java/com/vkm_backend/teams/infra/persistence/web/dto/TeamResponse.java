@@ -1,6 +1,5 @@
 package com.vkm_backend.teams.infra.persistence.web.dto;
 
-import com.vkm_backend.teams.domain.CompositionHash;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;

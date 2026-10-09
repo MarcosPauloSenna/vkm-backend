@@ -3,7 +3,6 @@ package com.vkm_backend.teams.service;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.teams.domain.CompositionHash;
 import com.vkm_backend.teams.domain.TeamMembers;
-import com.vkm_backend.teams.domain.Teams;
 import com.vkm_backend.teams.infra.mapper.TeamMembersMapper;
 import com.vkm_backend.teams.infra.mapper.TeamsMapper;
 import com.vkm_backend.teams.infra.persistence.entities.TeamMembersEntity;

@@ -5,20 +5,14 @@ import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
 import com.vkm_backend.infra.global.dto.PageResponse;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import com.vkm_backend.infra.global.mapper.PageResponseMapper;
-import com.vkm_backend.infra.global.specification.DynamicFilter;
-import com.vkm_backend.infra.global.specification.DynamicSpecification;
 import com.vkm_backend.teams.infra.mapper.TeamsMapper;
 import com.vkm_backend.teams.infra.persistence.entities.TeamsEntity;
-import com.vkm_backend.teams.infra.persistence.repository.TeamsRepository;
-import com.vkm_backend.teams.infra.persistence.web.dto.TeamResponse;
 import com.vkm_backend.teams.infra.persistence.web.dto.TeamsGroupResponse;
 import com.vkm_backend.teams.infra.persistence.web.dto.TeamsSearchRequest;
-import com.vkm_backend.teams.infra.specification.TeamSpecification;
 import com.vkm_backend.teams.service.SearchTeamsService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
