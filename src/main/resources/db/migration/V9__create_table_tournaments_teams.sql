@@ -4,7 +4,7 @@ CREATE TABLE tournaments_teams
     tournament_id BIGINT                                  NOT NULL,
     team_id       BIGINT                                  NOT NULL,
     seed          INTEGER,
-    status        VARCHAR(255)                            NOT NULL,
+    status        VARCHAR(255)                            ,
     created_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     CONSTRAINT pk_tournaments_teams PRIMARY KEY (id),
     CONSTRAINT FK_TOURNAMENTS_TEAMS_TEAMS FOREIGN KEY (team_id) REFERENCES teams(id),
@@ -12,7 +12,17 @@ CREATE TABLE tournaments_teams
     UNIQUE (
             tournament_id,
             team_id
+        ),
+    CHECK (
+        status IN (
+                   'ACTIVE',
+                   'ELIMINATED',
+                   'CHAMPION',
+                   'WITHDRAWN'
+            )
         )
+
+
 );
 
 

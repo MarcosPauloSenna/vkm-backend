@@ -30,6 +30,9 @@ public class TournamentsTeamsEntity {
             foreignKey = @ForeignKey(name = "fk_tournaments_teams_teams"))
     private TeamsEntity teamId;
 
+    @Column(name = "group_name")
+    private String groupName;
+
     private Integer seed;
 
     @Column(name = "status", nullable = false)
@@ -44,7 +47,9 @@ public class TournamentsTeamsEntity {
                                   Integer seed,
                                   TournamentTeamsStatus status,
                                   TeamsEntity teamId,
-                                  TournamentsEntity tournamentId) {
+                                  TournamentsEntity tournamentId,
+                                  String groupName) {
+        this.groupName = groupName;
         this.createdAt = createdAt;
         this.id = id;
         this.seed = seed;

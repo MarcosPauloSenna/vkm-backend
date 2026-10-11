@@ -38,6 +38,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
+
+    @ExceptionHandler(TeamsNotFoundExcepton.class)
+    public ResponseEntity<ErrorResponse> teamsNotFoundException (TeamsNotFoundExcepton ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "TEAMS_NOT_FOUND");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(TournamentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> tournamentNotFoundException (TournamentNotFoundException ex, HttpServletRequest request){
+        String endPoint =  request.getRequestURI();
+        logOrigin(ex);
+        log.error("Endpoint da requisição: {}", endPoint);
+        ErrorResponse error  = new ErrorResponse(LocalDateTime.now(ZONE),HttpStatus.BAD_REQUEST.value() ,ex.getMessage(), "TOURNAMENT_NOT_FOUND");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> illegalStateException (IllegalStateException ex, HttpServletRequest request){
         String endPoint =  request.getRequestURI();
