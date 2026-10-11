@@ -6,6 +6,7 @@ import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
 import com.vkm_backend.group.infra.persistence.repository.GroupsRepository;
+import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 import com.vkm_backend.infra.global.exceptions.GroupNotFoundException;
 import com.vkm_backend.infra.global.exceptions.MemberNotFoundException;
 import com.vkm_backend.infra.global.exceptions.ValidationException;
@@ -31,41 +32,40 @@ public class GroupMemberAccessPolicy implements GroupAccessPolicy {
     }
 
     @Override
-    public GroupMembersEntity authorize(Long groupId, String username) {
-        GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
+    public AccessPolicyResponse authorize(Long groupId, String username) {
 
-        return membersEntity;
+        return validUserAndGroup(groupId, username);
     }
 
 
     @Override
-    public GroupMembersEntity authorizeAdminAndOwner(Long groupId, String username) {
-        GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
+    public AccessPolicyResponse authorizeAdminAndOwner(Long groupId, String username) {
+        AccessPolicyResponse response = validUserAndGroup(groupId, username);
 
-        if (membersEntity.getRole() != GroupMemberRole.ADMIN &&
-                membersEntity.getRole() != GroupMemberRole.OWNER) {
+        if (response.groupMembers().getRole() != GroupMemberRole.ADMIN &&
+                response.groupMembers().getRole() != GroupMemberRole.OWNER) {
             throw new AccessDeniedException(
                     "Usuário não possui permissão para esta operação."
             );
         }
 
-        return membersEntity;
+        return response;
     }
 
     @Override
-    public GroupMembersEntity authorizeOwner(Long groupId, String username) {
-        GroupMembersEntity membersEntity = validUserAndGroup(groupId, username);
+    public AccessPolicyResponse authorizeOwner(Long groupId, String username) {
+        AccessPolicyResponse response = validUserAndGroup(groupId, username);
 
-        if (membersEntity.getRole() != GroupMemberRole.OWNER) {
+        if (response.groupMembers().getRole() != GroupMemberRole.OWNER) {
             throw new AccessDeniedException(
                     "Usuário não possui permissão para esta operação."
             );
         }
 
-        return membersEntity;
+        return response;
     }
 
-    private GroupMembersEntity validUserAndGroup(Long groupId, String username) {
+    private AccessPolicyResponse validUserAndGroup(Long groupId, String username) {
         UserEntity user = userRepository.findByUsername(username);
         Optional<GroupsEntity> group = groupsRepository.findById(groupId);
 
@@ -87,7 +87,7 @@ public class GroupMemberAccessPolicy implements GroupAccessPolicy {
             );
         }
 
-        return membersEntity;
+        return new AccessPolicyResponse(membersEntity, group.get());
     }
 
 }

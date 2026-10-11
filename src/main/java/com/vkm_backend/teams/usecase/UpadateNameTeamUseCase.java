@@ -1,6 +1,7 @@
 package com.vkm_backend.teams.usecase;
 
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
+import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 import com.vkm_backend.group.service.GroupMemberAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.teams.infra.mapper.TeamsMapper;
@@ -35,8 +36,8 @@ public class UpadateNameTeamUseCase {
                                       String newName,
                                       Long groupId,
                                       String userName) {
-
-        GroupMembersEntity groupMember = groupMemberAccessPolicy.authorize(groupId, userName);
+        AccessPolicyResponse accessPolicyResponse = groupMemberAccessPolicy.authorize(groupId, userName);
+        GroupMembersEntity groupMember = accessPolicyResponse.groupMembers();
 
         List<TeamMembersEntity> teamMembers = teamMembersRepository.findByTeamsId_Id(teamId);
 

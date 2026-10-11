@@ -5,6 +5,7 @@ import com.vkm_backend.group.domain.GroupMemberStatus;
 import com.vkm_backend.group.infra.mapper.GroupMemberMapper;
 import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
 import com.vkm_backend.group.infra.persistence.repository.GroupMembersRepository;
+import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusRequest;
 import com.vkm_backend.group.infra.persistence.web.dto.MemberStatusResponse;
 import com.vkm_backend.group.service.GroupAccessPolicy;
@@ -47,8 +48,9 @@ public class UpadateStatusMemberUseCase {
     @Transactional
     public MemberStatusResponse updateStatusMember(Long groupId, Long memberId, String username, MemberStatusRequest request){
 
-         GroupMembersEntity membersAuthorized = authorizationService.authorizeAdminAndOwner(groupId, username);
+         AccessPolicyResponse response = authorizationService.authorizeAdminAndOwner(groupId, username);
 
+        GroupMembersEntity membersAuthorized = response.groupMembers();
 
         Optional<GroupMembersEntity> memberFind = membersRepository.findByIdAndGroupId_Id(memberId, groupId);
 

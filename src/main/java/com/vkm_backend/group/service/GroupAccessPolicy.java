@@ -1,6 +1,6 @@
 package com.vkm_backend.group.service;
 
-import com.vkm_backend.group.infra.persistence.entities.GroupMembersEntity;
+import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 
 /**
  * Política de acesso de um usuário a um grupo. Os use cases dependem apenas deste contrato;
@@ -12,23 +12,23 @@ public interface GroupAccessPolicy {
     /**
      * Qualquer membro APPROVED do grupo.
      *
-     * @throws com.vkm_backend.infra.global.exceptions.GroupNotFoundException grupo inexistente
+     * @throws com.vkm_backend.infra.global.exceptions.GroupNotFoundException  grupo inexistente
      * @throws com.vkm_backend.infra.global.exceptions.MemberNotFoundException usuário sem vínculo com o grupo
-     * @throws com.vkm_backend.infra.global.exceptions.ValidationException vínculo não APPROVED
+     * @throws com.vkm_backend.infra.global.exceptions.ValidationException     vínculo não APPROVED
      */
-    GroupMembersEntity authorize(Long groupId, String username);
+    AccessPolicyResponse authorize(Long groupId, String username);
 
     /**
      * Membro APPROVED com role ADMIN ou OWNER.
      *
      * @throws org.springframework.security.access.AccessDeniedException role insuficiente
      */
-    GroupMembersEntity authorizeAdminAndOwner(Long groupId, String username);
+    AccessPolicyResponse authorizeAdminAndOwner(Long groupId, String username);
 
     /**
      * Membro APPROVED com role OWNER.
      *
      * @throws org.springframework.security.access.AccessDeniedException role insuficiente
      */
-    GroupMembersEntity authorizeOwner(Long groupId, String username);
+    AccessPolicyResponse authorizeOwner(Long groupId, String username);
 }
