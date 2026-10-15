@@ -5,9 +5,11 @@ import com.vkm_backend.infra.global.mapper.EntityMapper;
 import com.vkm_backend.tournaments.domain.Tournaments;
 import com.vkm_backend.tournaments.infra.entities.TournamentsEntity;
 import com.vkm_backend.tournaments.infra.web.dto.TournamentResponse;
+import org.springframework.stereotype.Component;
 
 
 
+@Component
 public class TournamentMapper implements EntityMapper<TournamentsEntity, Tournaments, TournamentResponse> {
 
     @Override
@@ -21,6 +23,7 @@ public class TournamentMapper implements EntityMapper<TournamentsEntity, Tournam
         domain.setStatus(entity.getStatus());
         domain.setFormat(entity.getFormat());
         domain.setGroupId(entity.getGroupId());
+        domain.setCreatedAt(entity.getCreatedAt());
         return domain;
     }
 
@@ -54,4 +57,3 @@ public class TournamentMapper implements EntityMapper<TournamentsEntity, Tournam
 
 
 }
-

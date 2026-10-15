@@ -4,6 +4,7 @@ CREATE TABLE tournaments_teams
     tournament_id BIGINT                                  NOT NULL,
     team_id       BIGINT                                  NOT NULL,
     seed          INTEGER,
+    group_name    TEXT,
     status        VARCHAR(255)                            ,
     created_at    TIMESTAMP(6) WITHOUT TIME ZONE          NOT NULL,
     CONSTRAINT pk_tournaments_teams PRIMARY KEY (id),
@@ -15,6 +16,7 @@ CREATE TABLE tournaments_teams
         ),
     CHECK (
         status IN (
+                   'PENDING',
                    'ACTIVE',
                    'ELIMINATED',
                    'CHAMPION',

@@ -30,6 +30,23 @@ CREATE TABLE tournaments
         end_date IS NULL
         OR start_date IS NULL
         OR end_date >= start_date
+        ),
+    CHECK (
+        format IN (
+                   'KNOCKOUT',
+                   'ROUND_ROBIN',
+                   'GROUPS',
+                   'GROUPS_AND_KNOCKOUT'
+            )
+        ),
+    CHECK (
+            status IN (
+                'DRAFT',
+                'REGISTRATION',
+                'IN_PROGRESS',
+                'FINISHED',
+                'CANCELLED'
+            )
         )
 );
 

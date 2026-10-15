@@ -4,7 +4,9 @@ import com.vkm_backend.infra.global.mapper.EntityMapper;
 import com.vkm_backend.tournaments.domain.TournamentsTeams;
 import com.vkm_backend.tournaments.infra.entities.TournamentsTeamsEntity;
 import com.vkm_backend.tournaments.infra.web.dto.TournamentsTeamsResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TournamentTeamsMapper implements EntityMapper<TournamentsTeamsEntity, TournamentsTeams, TournamentsTeamsResponse> {
 
     @Override

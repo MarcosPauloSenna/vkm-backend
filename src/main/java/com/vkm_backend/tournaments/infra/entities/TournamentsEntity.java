@@ -3,7 +3,7 @@ package com.vkm_backend.tournaments.infra.entities;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import com.vkm_backend.infra.audit.Auditable;
 import com.vkm_backend.tournaments.domain.TournamentsStatus;
-import com.vkm_backend.tournaments.domain.TourrnamentsFormat;
+import com.vkm_backend.tournaments.domain.TournamentsFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,11 +40,11 @@ public class TournamentsEntity extends Auditable {
 
     @Column(name = "format", nullable = false)
     @Enumerated(EnumType.STRING)
-    private TourrnamentsFormat format;
+    private TournamentsFormat format;
 
     public TournamentsEntity(String description,
                              LocalDate endDate,
-                             TourrnamentsFormat format,
+                             TournamentsFormat format,
                              GroupsEntity groupId,
                              Long id,
                              String name,

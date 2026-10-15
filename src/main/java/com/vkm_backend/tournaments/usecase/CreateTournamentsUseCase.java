@@ -2,6 +2,7 @@ package com.vkm_backend.tournaments.usecase;
 
 import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 import com.vkm_backend.group.service.GroupAccessPolicy;
+import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.tournaments.domain.TournamentsStatus;
 import com.vkm_backend.tournaments.infra.entities.TournamentsEntity;
 import com.vkm_backend.tournaments.infra.mapper.TournamentMapper;
@@ -25,8 +26,12 @@ public class CreateTournamentsUseCase {
     }
 
     @Transactional
-    public TournamentResponse execute(String userMame, CreateTournamentRequest request, Long groupId) {
-        AccessPolicyResponse responseAccess = groupAccessPolicy.authorizeAdminAndOwner(groupId, userMame);
+    public TournamentResponse execute(String userName, CreateTournamentRequest request, Long groupId) {
+        AccessPolicyResponse responseAccess = groupAccessPolicy.authorizeAdminAndOwner(groupId, userName);
+
+        if (request.startDate().isAfter(request.endDate())) {
+            throw new BusinessException("A data de início não pode ser posterior à data de término.");
+        }
 
         TournamentsEntity tournamentEntity = new TournamentsEntity();
         tournamentEntity.setName(request.name());

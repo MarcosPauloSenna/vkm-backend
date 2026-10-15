@@ -14,7 +14,10 @@ import com.vkm_backend.tournaments.infra.web.dto.TournamentsTeamsResponse;
 import com.vkm_backend.tournaments.service.SearchTournamentTeamsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class SearchTournamentTeamsUseCase {
 
     private final SearchTournamentTeamsService searchTournamentTeamsService;
@@ -31,6 +34,7 @@ public class SearchTournamentTeamsUseCase {
         this.tournamentTeamsMapper = tournamentTeamsMapper;
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<TournamentsTeamsResponse> execute(SearchTournamentTeamsRequest request,
                                                           Pageable pageable,
                                                           Long tournamentId,

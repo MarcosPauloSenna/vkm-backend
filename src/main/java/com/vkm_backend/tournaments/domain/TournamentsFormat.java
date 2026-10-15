@@ -1,6 +1,6 @@
 package com.vkm_backend.tournaments.domain;
 
-public enum TourrnamentsFormat {
+public enum TournamentsFormat {
     /*
     KNOCKOUT -Eliminatória: quem perde uma partida é eliminado, até restar o campeão.
 

@@ -12,7 +12,10 @@ import com.vkm_backend.tournaments.infra.web.dto.TournamentResponse;
 import com.vkm_backend.tournaments.service.SearchTournamentsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class SearchTournamentsUseCase {
 
    private final GroupAccessPolicy groupAccessPolicy;
@@ -27,6 +30,7 @@ public class SearchTournamentsUseCase {
         this.searchTournamentsService = searchTournamentsService;
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<TournamentResponse> execute(Long groupId, SearchTournamentRequest request, Pageable pageable, String userName) {
 
         AccessPolicyResponse response = groupAccessPolicy.authorize(groupId, userName);

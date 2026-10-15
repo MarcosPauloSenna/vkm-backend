@@ -1,7 +1,7 @@
 package com.vkm_backend.tournaments.infra.web.dto;
 
 import com.vkm_backend.tournaments.domain.TournamentsStatus;
-import com.vkm_backend.tournaments.domain.TourrnamentsFormat;
+import com.vkm_backend.tournaments.domain.TournamentsFormat;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -13,6 +13,6 @@ public record TournamentResponse(Long id,
                                  LocalDate startDate,
                                  LocalDate endDate,
                                  TournamentsStatus status,
-                                 TourrnamentsFormat format,
+                                 TournamentsFormat format,
                                  Instant createdAt) {
 }

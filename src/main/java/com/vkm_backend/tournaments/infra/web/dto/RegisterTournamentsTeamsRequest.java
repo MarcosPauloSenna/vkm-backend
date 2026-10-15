@@ -1,4 +1,7 @@
 package com.vkm_backend.tournaments.infra.web.dto;
 
-public record RegisterTournamentsTeamsRequest(Long teamId) {
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public record RegisterTournamentsTeamsRequest(@NotNull @Positive Long teamId) {
 }

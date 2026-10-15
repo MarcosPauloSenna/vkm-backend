@@ -12,6 +12,17 @@ CREATE TABLE tournament_stages
     UNIQUE (
             tournament_id,
             stage_order
+        ),
+    CHECK (
+        stage_type IN (
+                       'GROUP',
+                       'ROUND_ROBIN',
+                       'ROUND_OF_16',
+                       'QUARTER_FINAL',
+                       'SEMI_FINAL',
+                       'THIRD_PLACE',
+                       'FINAL'
+            )
         )
 );
 

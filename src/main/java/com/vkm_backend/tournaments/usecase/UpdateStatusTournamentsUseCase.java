@@ -1,9 +1,12 @@
 package com.vkm_backend.tournaments.usecase;
 
+import com.vkm_backend.group.domain.GroupMemberStatus;
+import com.vkm_backend.group.domain.GroupMembers;
 import com.vkm_backend.group.infra.persistence.web.dto.AccessPolicyResponse;
 import com.vkm_backend.group.service.GroupAccessPolicy;
 import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.infra.global.exceptions.TournamentNotFoundException;
+import com.vkm_backend.teams.service.ListDetailTeamMembersService;
 import com.vkm_backend.tournaments.domain.TournamentTeamsStatus;
 import com.vkm_backend.tournaments.domain.TournamentsStatus;
 import com.vkm_backend.tournaments.infra.entities.TournamentsEntity;
@@ -18,10 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UpdateStatusTournamentsUseCase {
@@ -31,22 +31,20 @@ public class UpdateStatusTournamentsUseCase {
 
     private static final Map<TournamentsStatus, Set<TournamentsStatus>> ALLOWED_TRANSITIONS = new EnumMap<>(Map.of(
             TournamentsStatus.DRAFT, EnumSet.of(TournamentsStatus.REGISTRATION, TournamentsStatus.CANCELLED),
-            TournamentsStatus.REGISTRATION, EnumSet.of(TournamentsStatus.IN_PROGRESS, TournamentsStatus.CANCELLED),
+            TournamentsStatus.REGISTRATION, EnumSet.of(TournamentsStatus.DRAFT, TournamentsStatus.CANCELLED),
             TournamentsStatus.IN_PROGRESS, EnumSet.of(TournamentsStatus.FINISHED, TournamentsStatus.CANCELLED)
     ));
 
     private final GroupAccessPolicy groupAccessPolicy;
     private final TournamentsRepository tournamentsRepository;
-    private final TournamentsTeamsRepository tournamentsTeamsRepository;
     private final TournamentMapper mapper;
+
 
     public UpdateStatusTournamentsUseCase(GroupAccessPolicy groupAccessPolicy,
                                           TournamentsRepository tournamentsRepository,
-                                          TournamentsTeamsRepository tournamentsTeamsRepository,
                                           TournamentMapper mapper) {
         this.groupAccessPolicy = groupAccessPolicy;
         this.tournamentsRepository = tournamentsRepository;
-        this.tournamentsTeamsRepository = tournamentsTeamsRepository;
         this.mapper = mapper;
     }
 
@@ -75,10 +73,6 @@ public class UpdateStatusTournamentsUseCase {
             validateStartOfRegistration(tournament);
         }
 
-        if (newStatus == TournamentsStatus.IN_PROGRESS) {
-            validateStartOfTournament(tournament);
-        }
-
         tournament.setStatus(newStatus);
         TournamentsEntity saved = tournamentsRepository.save(tournament);
 
@@ -100,28 +94,5 @@ public class UpdateStatusTournamentsUseCase {
         }
     }
 
-    private void validateStartOfTournament(TournamentsEntity tournament) {
-        Specification<TournamentsEntity> otherInProgress = (root, query, cb) -> cb.and(
-                cb.equal(root.get("groupId"), tournament.getGroupId()),
-                cb.equal(root.get("status"), TournamentsStatus.IN_PROGRESS)
-        );
 
-        if (tournamentsRepository.count(otherInProgress) > 0) {
-            throw new BusinessException("Não é possível iniciar um novo torneio antes de finalizar ou cancelar o torneio já em andamento no grupo.");
-        }
-
-        Specification<TournamentsTeamsEntity> registeredTeams = (root, query, cb) -> cb.and(
-                cb.equal(root.get("tournamentId"), tournament),
-                cb.or(
-                        cb.isNull(root.get("status")),
-                        cb.equal(root.get("status"), TournamentTeamsStatus.ACTIVE)
-                )
-        );
-
-        long teams = tournamentsTeamsRepository.count(registeredTeams);
-        if (teams < MIN_TEAMS_TO_START) {
-            throw new BusinessException("Não é possível iniciar o torneio: são necessários no mínimo " + MIN_TEAMS_TO_START
-                    + " times registrados aprovados, mas há apenas " + teams + ".");
-        }
-    }
 }

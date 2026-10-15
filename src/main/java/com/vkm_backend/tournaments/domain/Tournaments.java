@@ -1,6 +1,5 @@
 package com.vkm_backend.tournaments.domain;
 
-import com.vkm_backend.group.domain.Groups;
 import com.vkm_backend.group.infra.persistence.entities.GroupsEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +18,7 @@ public class Tournaments {
     private LocalDate startDate;
     private LocalDate endDate;
     private TournamentsStatus status;
-    private TourrnamentsFormat format;
+    private TournamentsFormat format;
     private Long createdBy;
     private Long updatedBy;
     private Instant createdAt;
@@ -29,7 +28,7 @@ public class Tournaments {
                        Instant createdAt,
                        String description,
                        LocalDate endDate,
-                       TourrnamentsFormat format,
+                       TournamentsFormat format,
                        GroupsEntity groupId,
                        Long id,
                        String name,
