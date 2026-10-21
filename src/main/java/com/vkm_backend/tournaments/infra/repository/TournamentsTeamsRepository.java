@@ -17,4 +17,6 @@ public interface TournamentsTeamsRepository extends DynamicRepository<Tournament
     int countByTournamentId(TournamentsEntity id);
 
     List<TournamentsTeamsEntity> findByTournamentId(TournamentsEntity tournament);
+
+    TournamentsTeamsEntity findByIdAndTournamentId(Long aLong, TournamentsEntity tournament);
 }

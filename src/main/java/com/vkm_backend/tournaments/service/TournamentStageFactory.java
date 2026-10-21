@@ -1,5 +1,6 @@
 package com.vkm_backend.tournaments.service;
 
+import com.vkm_backend.infra.global.exceptions.BusinessException;
 import com.vkm_backend.tournaments.domain.TournamentStageDefinition;
 import com.vkm_backend.tournaments.domain.TournamentsFormat;
 import com.vkm_backend.tournaments.domain.TournamentsStageTypes;
@@ -69,7 +70,7 @@ public class TournamentStageFactory {
             );
         }
 
-        throw new IllegalArgumentException(
+        throw new BusinessException(
                 "Quantidade de equipes acima do limite suportado."
         );
     }
